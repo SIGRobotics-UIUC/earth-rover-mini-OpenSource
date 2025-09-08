@@ -87,7 +87,7 @@ typedef enum {
     COLOR_RED
 } Color;
 
-//系统运行状态灯显示
+//系统运行状态灯显示 = System running status indicator light display 
 void set_sys_rgb_led_color_flash (rt_uint16_t on_time, system_state_t sys_status)
 {
     rt_uint32_t received_flags = 0;
@@ -95,12 +95,12 @@ void set_sys_rgb_led_color_flash (rt_uint16_t on_time, system_state_t sys_status
     static Color current_color = COLOR_GREEN;
     static uint8_t charge_flag = 1;
     static uint8_t imu_calib = 0;
-    /**电量指示灯状态**/
+    /**电量指示灯状态 = Battery indicator light status**/
     switch (current_color) {
     case COLOR_GREEN:
     {
         color_buf[0] = green;
-        if (robot_state.battery < 67.0) { // 60% - 3% 滞回
+        if (robot_state.battery < 67.0) { // 60% - 3% 滞回 = 60% - 3% hysteresis = on @ 60% but won't turn off until below 57%, that way it won't quickly toggle on and off at rapid changes
             current_color = COLOR_YELLOW;
             color_buf[0] = yellow;
         }
@@ -109,10 +109,10 @@ void set_sys_rgb_led_color_flash (rt_uint16_t on_time, system_state_t sys_status
     case COLOR_YELLOW:
     {
         color_buf[0] = yellow;
-        if (robot_state.battery > 73.0) { // 60% + 3% 滞回
+        if (robot_state.battery > 73.0) { // 60% + 3% 滞回 = 60% + 3% hysteresis
             current_color = COLOR_GREEN;
             color_buf[0] = green;
-        } else if (robot_state.battery < 27.0) { // 20% - 3% 滞回
+        } else if (robot_state.battery < 27.0) { // 20% - 3% 滞回 = 20% - 3% hysteresis
             current_color = COLOR_RED;
             color_buf[0] = red;
         }
@@ -121,7 +121,7 @@ void set_sys_rgb_led_color_flash (rt_uint16_t on_time, system_state_t sys_status
     case COLOR_RED:
     {
         color_buf[0] = red;
-        if (robot_state.battery > 33.0) { // 20% + 3% 滞回
+        if (robot_state.battery > 33.0) { // 20% + 3% 滞回 = 20% + 3% hysteresis
             current_color = COLOR_YELLOW;
             color_buf[0] = yellow;
         }
@@ -129,7 +129,7 @@ void set_sys_rgb_led_color_flash (rt_uint16_t on_time, system_state_t sys_status
     break;
     }
 
-    if(sys_status == SYSTEM_STATE_CHARGING)//判断到充电状态电源指示灯进行慢闪
+    if(sys_status == SYSTEM_STATE_CHARGING)//判断到充电状态电源指示灯进行慢闪 = When charging is detected, make the power indicator LED blink slowly.
     {
         if(charge_flag)
         {
@@ -140,7 +140,7 @@ void set_sys_rgb_led_color_flash (rt_uint16_t on_time, system_state_t sys_status
         }
         charge_flag = !charge_flag;
     }
-    //IMU校准事件
+    //IMU校准事件 = IMU calibration event
     if(imu_event != RT_NULL)
     {
         if (rt_event_recv(imu_event, IMU_CALIB_LED_START | IMU_CALIB_LED_DONE,
@@ -167,20 +167,20 @@ void set_sys_rgb_led_color_flash (rt_uint16_t on_time, system_state_t sys_status
         rt_thread_delay( on_time * 0.3);
         return;
     }
-    /**联网状态判定**/
+    /**联网状态判定 = Network connection status determination**/
     color_buf[1] = black;
     if(robot_state.pwr == 1)
     {
         switch ( robot_state.net_led_status )
         {
-        case UCP_STATE_UNKNOWN :  //默认状态
+        case UCP_STATE_UNKNOWN :  //默认状态 = Network connection status determination
         {
             color_buf[1] = red;
             ws2812b_write_test(2,color_buf);
             rt_thread_delay( on_time );
         }
         break;
-        case UCP_STATE_SIMABSENT :  //没有SIM卡(慢闪)
+        case UCP_STATE_SIMABSENT :  //没有SIM卡(慢闪) = No SIM card (slow blink)
         {
             color_buf[1] = red;
             ws2812b_write_test(2,color_buf);
@@ -190,7 +190,7 @@ void set_sys_rgb_led_color_flash (rt_uint16_t on_time, system_state_t sys_status
             rt_thread_delay( on_time );
         }
         break;
-        case UCP_NETWORK_DISCONNECTED :  //联网中(快闪)
+        case UCP_NETWORK_DISCONNECTED :  //联网中(快闪) = Connecting to network (fast blink)
         {
             color_buf[1] = green;
             ws2812b_write_test(2,color_buf);
@@ -200,14 +200,14 @@ void set_sys_rgb_led_color_flash (rt_uint16_t on_time, system_state_t sys_status
             rt_thread_delay( on_time * 0.3  );
         }
         break;
-        case UCP_NETWORK_CONNECTED : //联网结束(绿色常亮)
+        case UCP_NETWORK_CONNECTED : //联网结束(绿色常亮) = Network connection complete (green solid light)
         {
             color_buf[1] = green;
             ws2812b_write_test(2,color_buf);
             rt_thread_delay( on_time );
         }
         break;
-        case UCP_OTA_ING :   //OTA升级(蓝色快闪)
+        case UCP_OTA_ING :   //OTA升级(蓝色快闪) = OTA upgrade (blue fast blink)
         {
             color_buf[1] = blue;
             ws2812b_write_test(2,color_buf);
