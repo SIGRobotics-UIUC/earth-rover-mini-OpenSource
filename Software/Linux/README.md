@@ -2,11 +2,11 @@
 
 ## Build Example
 ```
-cd earth-rover-mini/Software/Linux
-git submodule update --init
+git clone --recursive https://github.com/SIGRobotics-UIUC/earth-rover-mini-OpenSource.git
+cd earth-rover-mini-OpenSource/Software/Linux
 mkdir build
 cd build
-cmake ..
+cmake -DCMAKE_TOOLCHAIN_FILE=../toolchain.cmake ..
 make
 ```
 
@@ -15,8 +15,7 @@ make
 - Search and connect the wireless network <b>frodobot_xxx</b>. The default password is <b>12345678</b>.
 - Once the connection is established. Connect to your robot with adb
 ```bash
-adb connect 192.168.11.1
-adb push hello /data/
+adb connect 192.168.11.1:5555
 adb shell
 ```
 
