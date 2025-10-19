@@ -71,6 +71,28 @@ def extract_frames(buf):
             i += 1
     return frames, buf[i:]
 
+def decode_ucp_0x01(frame):
+    # Usually just an ACK (0x00 = OK, 0x01 = error)
+    ack_code = frame[6] if len(frame) > 6 else None
+    return {"ack": ack_code}
+
+def decode_ucp_0x03(frame):
+    if len(frame) < 8: return None
+    mode = frame[6]
+    return {
+        "imu_correction_mode": "magnetometer" if mode == 1 else "gyro/accel",
+        "ack_status": "ok" if frame[7] == 0 else "error"
+    }
+
+def decode_ucp_0x04(frame):
+    if len(frame) < 8: return None
+    mode = frame[6]
+    return {
+        "imu_correction_end": "magnetometer" if mode == 1 else "gyro/accel",
+        "ack_status": "ok" if frame[7] == 0 else "error"
+    }
+
+
 def decode_ucp_0x05(frame):
     """Decode the 0x05 telemetry packet (state report)."""
     if len(frame) < 44:
@@ -102,6 +124,36 @@ def decode_ucp_0x05(frame):
         "voltage_V": volt_tenth/10.0,
         "current_A": curr_centi/100.0,
     }
+
+def decode_ucp_0x06(frame):
+    return {"imu_write_done": True}
+
+def decode_ucp_0x07(frame):
+    return {"mag_write_done": True}
+
+def decode_ucp_0x08(frame):
+    if len(frame) < 26: return None
+    vals = struct.unpack("<" + "h"*9, frame[6:6+18])
+    acc = vals[0:3]
+    gyro = vals[3:6]
+    mag = vals[6:9]
+    return {"acc_bias": acc, "gyro_bias": gyro, "mag_offset": mag}
+
+def decode_ucp_0x09(frame):
+    version = frame[6] | (frame[7]<<8)
+    return {"ota_version": version}
+
+def decode_ucp_0x0A(frame):
+    status_code = frame[6]
+    states = {
+        0: "UNKNOWN",
+        1: "SIM_ABSENT",
+        2: "NET_DISCONNECTED",
+        3: "NET_CONNECTED",
+        4: "OTA_IN_PROGRESS",
+    }
+    return {"device_state": states.get(status_code, "INVALID")}
+
 
 # ===========================================================
 # ---- Sender helpers (from your move.py) -------------------
