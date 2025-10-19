@@ -50,12 +50,16 @@ class api_structure:
             self.get_report(frame)
             pass
         if pkt_id == UCP_IMU_WRITE:
+            # shouldn't recv this as host
             pass
         if pkt_id == UCP_MAG_WRITE:
+            # shouldn't recv this as host
             pass
         if pkt_id == UCP_IMUMAG_READ:
+            self.get_IMU()
             pass
         if pkt_id == UCP_OTA:
+            self.general_ACK()
             pass
         if pkt_id == UCP_STATE:
             pass
@@ -135,7 +139,7 @@ class api_structure:
         # used by imu_calbirate to see if request was successful
         pass
 
-    def general_ACK(self):
+    def general_ACK(self, packet):
         pass
 
     def get_report(self, frame):
