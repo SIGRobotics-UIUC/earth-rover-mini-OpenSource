@@ -1,7 +1,7 @@
 import socket, struct
+import uart_cp
 
 
-"""
 UCP_KEEP_ALIVE           = 0x1
 UCP_MOTOR_CTL            = 0x2
 UCP_IMU_CORRECTION_START = 0x3
@@ -12,7 +12,7 @@ UCP_MAG_WRITE            = 0x7
 UCP_IMUMAG_READ          = 0x8
 UCP_OTA                  = 0x9
 UCP_STATE                = 0xA
-"""
+
 
 class api_structure:
     def __init__(self, ip, port=5500):
@@ -24,17 +24,46 @@ class api_structure:
         sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
         return sock
 
-    def make_header(self, packet):
+    def make_header(self, packet, id):
         # Header General Function
-        pass
+        # header size: 4 bytes total
+        packet.len   = len(bytes(packet))
+        packet.id    = id
+        packet.index = 0
+        # return packet
 
-    def read_header(self, packet, id):
+    def read(self, frame):
         # Read Header Function
-        pass
+        pkt_id = frame[4] # why tf?
+        if pkt_id == UCP_KEEP_ALIVE:
+            self.pong()
+        if pkt_id == UCP_MOTOR_CTL:
+            # won't happen, motor ctrl has no ack
+            pass
+        if pkt_id == UCP_IMU_CORRECTION_START:
+
+            pass
+        if pkt_id == UCP_IMU_CORRECTION_END:
+            self.IMU_calibrate_ACK()
+            pass
+        if pkt_id == UCP_RPM_REPORT:
+            pass
+        if pkt_id == UCP_IMU_WRITE:
+            pass
+        if pkt_id == UCP_MAG_WRITE:
+            pass
+        if pkt_id == UCP_IMUMAG_READ:
+            pass
+        if pkt_id == UCP_OTA:
+            pass
+        if pkt_id == UCP_STATE:
+            pass
     
     def ping():
         # pings rover
-        pass
+        my_ping = uart_cp.UcpAlivePing()
+        self.make_header(my_ping, UCP_KEEP_ALIVE)
+        self.send_packet(my_ping)
 
     def pong():
         # receives pong
@@ -125,20 +154,5 @@ class api_structure:
 
     def disconnect():
         self.__socket.close()
-
-
-# GETTERS
-
-#Magnetometer
-
-#IMU Read
-
-#Device report
-
-
-
-# SETTERS
-
-# set ctrl cmd pckt
 
 
