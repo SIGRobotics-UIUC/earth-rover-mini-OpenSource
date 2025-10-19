@@ -41,12 +41,13 @@ class api_structure:
             # won't happen, motor ctrl has no ack
             pass
         if pkt_id == UCP_IMU_CORRECTION_START:
-
+            # not sure
             pass
         if pkt_id == UCP_IMU_CORRECTION_END:
             self.IMU_calibrate_ACK()
             pass
         if pkt_id == UCP_RPM_REPORT:
+            self.get_report(frame)
             pass
         if pkt_id == UCP_IMU_WRITE:
             pass
@@ -137,7 +138,7 @@ class api_structure:
     def general_ACK(self):
         pass
 
-    def get_report(self):
+    def get_report(self, frame):
         pass
     
     def MAG_write(self, mag_bias_x, mag_bias_y, mag_bias_z):
