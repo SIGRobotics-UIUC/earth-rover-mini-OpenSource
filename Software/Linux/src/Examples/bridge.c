@@ -78,7 +78,18 @@ int setup_server(int port) {
     }
 
     int opt = 1;
-    setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
+    if (setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) < 0) {
+        perror("setsockopt(SO_REUSEADDR)");
+        close(fd);
+        return -1;
+    }
+
+    if (setsockopt(fd, SOL_SOCKET, SO_REUSEPORT, &opt, sizeof(opt)) < 0) { // added so we can re-bind to same addr once program terminates
+        perror("setsockopt(SO_REUSEPORT)");
+        close(fd);
+        return -1;
+    } 
+
 
     struct sockaddr_in addr;
     memset(&addr, 0, sizeof(addr));

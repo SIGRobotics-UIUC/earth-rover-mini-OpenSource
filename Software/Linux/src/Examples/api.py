@@ -17,6 +17,7 @@ UCP_STATE                = 0xA
 class api_structure:
     def __init__(self, ip, port=5500):
         self.__socket = self.connect_to_rover(ip, port)
+        # print("CREATED SOCKET")
 
     def connect_to_rover(self, ip, port):
         # socket structure:
@@ -27,9 +28,9 @@ class api_structure:
     def make_header(self, packet, id):
         # Header General Function
         # header size: 4 bytes total
-        packet.len   = len(bytes(packet))
-        packet.id    = id
-        packet.index = 0
+        packet.hd.len   = len(bytes(packet))
+        packet.hd.id    = id
+        packet.hd.index = 0
         # return packet
 
     def read(self, frame):
@@ -113,22 +114,36 @@ class api_structure:
             0x48, 0x49, 0x89, 0x4B, 0x8B, 0x8A, 0x4A, 0x4E, 0x8E, 0x8F, 0x4F, 0x8D, 0x4D, 0x4C, 0x8C,
             0x44, 0x84, 0x85, 0x45, 0x87, 0x47, 0x46, 0x86, 0x82, 0x42, 0x43, 0x83, 0x41, 0x81, 0x80,
             0x40]
-        for b in data:
+        for b in buf:
             index = crc_lo ^ b
             crc_lo = crc_hi ^ crc_hi_table[index]
             crc_hi = crc_lo_table[index]
         return (crc_hi << 8) | crc_lo
 
-    def send_packet(packet):
+    def send_packet(self, packet):
         head = 0xfffd
         payload = bytes(packet)
+        print("PAYLOAD:", payload)
         buf = struct.pack("<H", head) + payload
         crc = self.crc16(buf)
         buf += struct.pack("<H", crc)
+        print("Buf:", buf)
         self.__socket.sendall(buf)
+        print("SENT DATA\n")
         
-    def ctrl_packet(self, speed, angular, front_led=0, back_led=0, version=0)
-        pass
+#buffer: b'\xfd\xff\x14\x00\x02\x00<\x00h\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00KN'
+    def ctrl_packet(self, speed, angular, front_led=0, back_led=0, version=0):
+        my_ctrl_packet = uart_cp.UcpCtlCmd()
+        self.make_header(my_ctrl_packet, UCP_MOTOR_CTL)
+        print("Header:", UCP_MOTOR_CTL)
+        print("Packet so far:", my_ctrl_packet)
+        my_ctrl_packet.speed     = speed
+        my_ctrl_packet.angular   = angular
+        # my_ctrl_packet.front_led = front_led
+        # my_ctrl_packet.back_led  = back_led
+        # my_ctrl_packet.version   = version
+
+        self.send_packet(my_ctrl_packet)
 
     def IMU_calibrate(self, type):
         # sends request to calibrate either:
