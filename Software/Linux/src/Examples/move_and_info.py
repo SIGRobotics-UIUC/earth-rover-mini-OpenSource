@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import socket, struct, time, threading
-from uart_cp import UcpCtlCmd, UCP_MOTOR_CTL
+from uart_cp import UCP_KEEP_ALIVE, UCP_MOTOR_CTL, UCP_IMU_CORRECTION_START, UCP_IMU_CORRECTION_END, UCP_RPM_REPORT, UCP_IMU_WRITE, UCP_MAG_WRITE, UCP_IMUMAG_READ, UCP_OTA, UCP_STATE
+from uart_cp import UcpErr, UcpImuCorrectionType, UcpHd, UcpAlivePing, UcpAlivePong, UcpCtlCmd, UcpImuCorrect, UcpImuCorrectAck, UcpRep, UcpMagW, UcpMagWAck, UcpImuW, UcpImuWAck, UcpImuR, UcpImuRAck, UcpOta, UcpOtaAck, UcpState
 
 # ===========================================================
 # ---- CRC16 identical to firmware --------------------------
@@ -158,6 +159,21 @@ def decode_ucp_0x0A(frame):
 # ===========================================================
 # ---- Sender helpers (from your move.py) -------------------
 # ===========================================================
+
+def send_keep_alive(sock):
+    ping = UcpAlivePing()
+    ping.hd.len = len(bytes(ping))      # total length of struct (no CRC)
+    ping.hd.id = UCP_KEEP_ALIVE         # 0x01
+    ping.hd.index = 0
+    head = 0xfffd                       # constant packet header
+    payload = bytes(ping)
+    buf = struct.pack("<H", head) + payload
+    crc = crc16(buf)
+    buf += struct.pack("<H", crc)
+
+    sock.sendall(buf)
+    print(f"[SEND] Keep-alive packet (len={len(buf)}, crc=0x{crc:04X})")
+
 def send_ctl_cmd(sock, speed, angular):
     cmd = UcpCtlCmd()
     cmd.hd.len = len(bytes(cmd))
@@ -184,6 +200,49 @@ def robot_move(sock, duration=3.0, speed=60, angular=0):
 # ===========================================================
 # ---- Reader thread ----------------------------------------
 # ===========================================================
+# def reader_loop(sock, stop_event, time_delay):
+#     buf = b""
+#     print("[READER] Telemetry thread started")
+#     while not stop_event.is_set():
+#         try:
+#             data = sock.recv(1024)
+#             if not data:
+#                 print("[READER] Socket closed by rover")
+#                 break
+#             buf += data
+#             frames, buf = extract_frames(buf)
+#             for f in frames:
+#                 pkt_id = f[4]
+#                 if pkt_id == 0x05:
+#                     decoded = decode_ucp_0x05(f)
+#                     if decoded:
+#                         print(f"[TELE] Batt={decoded['battery_mV']}mV "
+#                               f"RPM={decoded['rpm']} "
+#                               f"Head={decoded['heading_deg']:.1f}° "
+#                               f"V={decoded['voltage_V']:.1f}V I={decoded['current_A']:.2f}A "
+#                               f"Acc(m/s^2)=X: {decoded['acc_ms2'][0]:.3f} Y: {decoded['acc_ms2'][1]:.3f} Z: {decoded['acc_ms2'][2]:.3f} "
+#                               f"Gyro(°/s)=X: {decoded['gyro'][0]:.2f} Y: {decoded['gyro'][1]:.2f} Z: {decoded['gyro'][2]:.2f} "
+#                               f"Mag(µT)=X: {decoded['mag'][0]:.1f} Y: {decoded['mag'][1]:.1f} Z: {decoded['mag'][2]:.1f}")
+#                 time.sleep(time_delay)
+#         except socket.timeout:
+#             continue
+#         except Exception as e:
+#             print("[READER] Error:", e)
+#             break
+#     print("[READER] Exit")
+
+DECODE_MAP = {
+    0x01: decode_ucp_0x01,
+    0x03: decode_ucp_0x03,
+    0x04: decode_ucp_0x04,
+    0x05: decode_ucp_0x05,
+    0x06: decode_ucp_0x06,
+    0x07: decode_ucp_0x07,
+    0x08: decode_ucp_0x08,
+    0x09: decode_ucp_0x09,
+    0x0A: decode_ucp_0x0A,
+}
+
 def reader_loop(sock, stop_event, time_delay):
     buf = b""
     print("[READER] Telemetry thread started")
@@ -197,23 +256,24 @@ def reader_loop(sock, stop_event, time_delay):
             frames, buf = extract_frames(buf)
             for f in frames:
                 pkt_id = f[4]
-                if pkt_id == 0x05:
-                    decoded = decode_ucp_0x05(f)
-                    if decoded:
-                        print(f"[TELE] Batt={decoded['battery_mV']}mV "
-                              f"RPM={decoded['rpm']} "
-                              f"Head={decoded['heading_deg']:.1f}° "
-                              f"V={decoded['voltage_V']:.1f}V I={decoded['current_A']:.2f}A "
-                              f"Acc(m/s^2)=X: {decoded['acc_ms2'][0]:.3f} Y: {decoded['acc_ms2'][1]:.3f} Z: {decoded['acc_ms2'][2]:.3f} "
-                              f"Gyro(°/s)=X: {decoded['gyro'][0]:.2f} Y: {decoded['gyro'][1]:.2f} Z: {decoded['gyro'][2]:.2f} "
-                              f"Mag(µT)=X: {decoded['mag'][0]:.1f} Y: {decoded['mag'][1]:.1f} Z: {decoded['mag'][2]:.1f}")
-                time.sleep(time_delay)
+                decoder = DECODE_MAP.get(pkt_id)
+                if decoder:
+                    decoded = decoder(f)
+                    print(f"[PKT {pkt_id:02X}] {decoded}")
+                else:
+                    print(f"[PKT {pkt_id:02X}] (No decoder)")
+            time.sleep(time_delay)
         except socket.timeout:
             continue
         except Exception as e:
             print("[READER] Error:", e)
             break
     print("[READER] Exit")
+
+
+response_event = threading.Event()
+response_data = {}
+
 
 # ===========================================================
 # ---- Main -------------------------------------------------
@@ -238,11 +298,13 @@ if __name__ == "__main__":
         # input("Press Enter to move backward...")
         # robot_move(sock, duration=3.0, speed=-100, angular=0)
 
-        input("Press Enter to turn right...")
-        robot_move(sock, duration=3.0, speed=60, angular=360)
+        send_keep_alive(sock)
+        input("Press Enter to turn right...\n")
+        # robot_move(sock, duration=0.5, speed=60, angular=360)
+        send_keep_alive(sock)
 
     finally:
         stop_event.set()
-        t.join(timeout=2)
+        t.join(timeout=5)
         sock.close()
         print("[MAIN] Connection closed")
