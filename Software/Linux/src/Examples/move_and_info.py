@@ -160,7 +160,9 @@ def decode_ucp_0x0A(frame):
 # ---- Sender helpers (from your move.py) -------------------
 # ===========================================================
 
-def send_keep_alive(sock):
+def send_keep_alive(sock, response_event=None, response_data=None, timeout=1.0):
+    if response_event:
+        response_event.clear()
     ping = UcpAlivePing()
     ping.hd.len = len(bytes(ping))      # total length of struct (no CRC)
     ping.hd.id = UCP_KEEP_ALIVE         # 0x01
@@ -172,7 +174,13 @@ def send_keep_alive(sock):
     buf += struct.pack("<H", crc)
 
     sock.sendall(buf)
+    time.sleep(0.02)
     print(f"[SEND] Keep-alive packet (len={len(buf)}, crc=0x{crc:04X})")
+    if response_event:
+        if response_event.wait(timeout=timeout):
+            print(f"[ACK RECEIVED] {response_data.get('last')}")
+        else:
+            print("[TIMEOUT] No ACK received from rover")
 
 def send_ctl_cmd(sock, speed, angular):
     cmd = UcpCtlCmd()
@@ -243,7 +251,7 @@ DECODE_MAP = {
     0x0A: decode_ucp_0x0A,
 }
 
-def reader_loop(sock, stop_event, time_delay):
+def reader_loop(sock, stop_event, response_event, response_data, time_delay):
     buf = b""
     print("[READER] Telemetry thread started")
     while not stop_event.is_set():
@@ -259,10 +267,24 @@ def reader_loop(sock, stop_event, time_delay):
                 decoder = DECODE_MAP.get(pkt_id)
                 if decoder:
                     decoded = decoder(f)
+                    if not decoded:
+                        print(f"[PKT {pkt_id:02X}] (Decode error or empty)")
+                        continue
+
+                    # Print result nicely
                     print(f"[PKT {pkt_id:02X}] {decoded}")
+
+                    # For ACK-type messages, signal the main thread
+                    if pkt_id in (0x01, 0x03, 0x04, 0x06, 0x07, 0x08, 0x09, 0x0A):
+                        response_data['last'] = decoded
+                        response_event.set()
+
                 else:
+                    # Unknown or unsupported packet
                     print(f"[PKT {pkt_id:02X}] (No decoder)")
-            time.sleep(time_delay)
+
+                time.sleep(time_delay)
+
         except socket.timeout:
             continue
         except Exception as e:
@@ -271,8 +293,10 @@ def reader_loop(sock, stop_event, time_delay):
     print("[READER] Exit")
 
 
+
 response_event = threading.Event()
 response_data = {}
+stop_event = threading.Event()
 
 
 # ===========================================================
@@ -287,8 +311,8 @@ if __name__ == "__main__":
     sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
     print_time_delay = 0.00001
 
-    stop_event = threading.Event()
-    t = threading.Thread(target=reader_loop, args=(sock, stop_event, print_time_delay), daemon=True)
+
+    t = threading.Thread(target=reader_loop, args=(sock, stop_event, response_event, response_data, print_time_delay), daemon=True)
     t.start()
 
     try:
@@ -298,10 +322,10 @@ if __name__ == "__main__":
         # input("Press Enter to move backward...")
         # robot_move(sock, duration=3.0, speed=-100, angular=0)
 
-        send_keep_alive(sock)
+        send_keep_alive(sock, response_event, response_data)
         input("Press Enter to turn right...\n")
         # robot_move(sock, duration=0.5, speed=60, angular=360)
-        send_keep_alive(sock)
+        send_keep_alive(sock, response_event, response_data)
 
     finally:
         stop_event.set()
