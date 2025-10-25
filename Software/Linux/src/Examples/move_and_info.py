@@ -323,9 +323,9 @@ if __name__ == "__main__":
         # robot_move(sock, duration=3.0, speed=-100, angular=0)
 
         send_keep_alive(sock, response_event, response_data)
-        input("Press Enter to turn right...\n")
+        # input("Press Enter to turn right...\n")
         # robot_move(sock, duration=0.5, speed=60, angular=360)
-        send_keep_alive(sock, response_event, response_data)
+        # send_keep_alive(sock, response_event, response_data)
 
     finally:
         stop_event.set()
