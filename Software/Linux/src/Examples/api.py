@@ -1,5 +1,7 @@
 import socket, struct, asyncio, time
-import uart_cp
+from uart_cp import UCP_KEEP_ALIVE, UCP_MOTOR_CTL, UCP_IMU_CORRECTION_START, UCP_IMU_CORRECTION_END, UCP_RPM_REPORT, UCP_IMU_WRITE, UCP_MAG_WRITE, UCP_IMUMAG_READ, UCP_OTA, UCP_STATE
+from uart_cp import UcpErr, UcpImuCorrectionType, UcpHd, UcpAlivePing, UcpAlivePong, UcpCtlCmd, UcpImuCorrect, UcpImuCorrectAck, UcpRep, UcpMagW, UcpMagWAck, UcpImuW, UcpImuWAck, UcpImuR, UcpImuRAck, UcpOta, UcpOtaAck, UcpState
+
 
 
 UCP_KEEP_ALIVE           = 0x1
@@ -190,6 +192,15 @@ class API:
         self.running = False
         self.ack_event = asyncio.Event()
         self.last_ack = None
+        self.DECODE_MAP = {
+            0x01: self.decode_pong,
+            0x04: self.decode_imu_correct_ack,
+            0x05: self.decode_rpm_report,
+            0x08: self.decode_imu_read_ack,
+            0x09: self.decode_ota_ack,
+            0x0A: self.decode_state,
+        }
+        self.last_rpm_log_time = 0.0
 
     # Connection Handling
     async def connect(self):
@@ -200,9 +211,14 @@ class API:
 
     async def disconnect(self):
         if self.writer:
+            self.running = False
             self.writer.close()
             await self.writer.wait_closed()
             print("[API] Disconnected from rover")
+        if hasattr(self, "reader_task"):
+            self.reader_task.cancel()
+            with contextlib.suppress(asyncio.CancelledError):
+                await self.reader_task
         self.running = False
 
     # Frame & Header Helpers
@@ -353,24 +369,88 @@ class API:
         return frames, buf[i:]
 
 
+    # Decoders
+    def decode_pong(self, frame):
+        pkt = UcpAlivePong.from_buffer_copy(frame[2:-2])
+        decoded = {"ack": pkt.err}
+        self.last_ack = decoded
+        self.ack_event.set()
+        return decoded
+    
+    def decode_imu_correct_ack(self, frame: bytes):
+        pkt = UcpImuCorrectAck.from_buffer_copy(frame[2:-2])
+        decoded = {"type": pkt.type, "err": pkt.err}
+        self.last_ack = decoded
+        self.ack_event.set()
+        return decoded
+
+    def decode_rpm_report(self, frame: bytes):
+        pkt = UcpRep.from_buffer_copy(frame[2:-2])
+        return {
+            "voltage": pkt.voltage / 100.0,
+            "rpm": [pkt.rpm[i] for i in range(4)],
+            "acc_g": [v / 16384.0 for v in pkt.acc],
+            "acc_ms2": [v / 16384.0 * 9.80665 for v in pkt.acc],
+            "gyro_dps": [v / 131.0 for v in pkt.gyros],
+            "mag_uT": [v * 0.083 for v in pkt.mag],
+            "heading_deg": pkt.heading / 100.0,
+            "stop_switch": pkt.stop_switch,
+            "error_code": pkt.error_code,
+            "version": pkt.version,
+        }
+
+    def decode_imu_read_ack(self, frame: bytes):
+        pkt = UcpImuRAck.from_buffer_copy(frame[2:-2])
+        decoded = {
+            "err": pkt.err,
+            "acc_bias": (pkt.acc_bias_x, pkt.acc_bias_y, pkt.acc_bias_z),
+            "gyro_bias": (pkt.gyro_bias_x, pkt.gyro_bias_y, pkt.gyro_bias_z),
+            "mag_bias": (pkt.mag_bias_x, pkt.mag_bias_y, pkt.mag_bias_z),
+        }
+        self.last_ack = decoded
+        self.ack_event.set()
+        return decoded
+
+    def decode_ota_ack(self, frame: bytes):
+        pkt = UcpOtaAck.from_buffer_copy(frame[2:-2])
+        decoded = {"err": pkt.err}
+        self.last_ack = decoded
+        self.ack_event.set()
+        return decoded
+
+    def decode_state(self, frame: bytes):
+        pkt = UcpState.from_buffer_copy(frame[2:-2])
+        return {"state": pkt.state}
+
+    def decode_unknown(self, frame: bytes):
+        pkt_id = frame[4]
+        payload = frame[6:-2]
+        print(f"[WARN] Unknown packet ID 0x{pkt_id:02X}, payload={payload.hex()}")
+        return {"raw_payload": payload.hex()}
+
+    
 
 
     # Incoming Packet Parser
     async def read(self, frame):
         pkt_id = frame[4]
-        if pkt_id == UCP_KEEP_ALIVE:
-            self.last_ack = {"ack": frame[6] if len(frame) > 6 else 0}
-            self.ack_event.set()
-            print(f"[ACK] Keep-alive response: {self.last_ack}")
-        elif pkt_id == UCP_RPM_REPORT:
-            print("[TELEMETRY] Received RPM report frame")
-            # TODO: call other decode functions here later
+        decoder = self.DECODE_MAP.get(pkt_id)
+        if decoder:
+            decoded = decoder(frame)
+            if pkt_id == 0x05:
+                now = time.time()
+                if now - self.last_rpm_log_time >= 1.0:
+                    self.last_rpm_log_time = now
+                    print(f"[PKT {pkt_id:02X}] {decoded}")
+            else:
+                print(f"[PKT {pkt_id:02X}] {decoded}")
         else:
-            print(f"[RECV] Unknown pkt_id=0x{pkt_id:02X}, len={len(frame)}")
+            self.decode_unknown(frame)
+
 
     # API Commands
     async def ping(self):
-        ping_pkt = uart_cp.UcpAlivePing()
+        ping_pkt = UcpAlivePing()
         self.make_header(ping_pkt, UCP_KEEP_ALIVE)
         self.ack_event.clear()
         print(f"[DEBUG] hdr.len={ping_pkt.hd.len}, sizeof(packet)={len(bytes(ping_pkt))}")
@@ -381,9 +461,19 @@ class API:
             print(f"[PING] ACK received: {self.last_ack}")
         except asyncio.TimeoutError:
             print("[PING] Timeout waiting for ACK")
+    
+    async def safe_ping(self, retries=3):
+        for attempt in range(1, retries + 1):
+            await self.ping()
+            if self.last_ack and self.last_ack.get("ack") == 0:
+                return True
+            print(f"[PING] Retry {attempt}/{retries} failed")
+            await asyncio.sleep(0.5)
+        print("[PING] Failed after retries")
+        return False
 
     async def ctrl_packet(self, speed, angular):
-        ctrl_pkt = uart_cp.UcpCtlCmd()
+        ctrl_pkt = UcpCtlCmd()
         self.make_header(ctrl_pkt, UCP_MOTOR_CTL)
         ctrl_pkt.speed = speed
         ctrl_pkt.angular = angular
@@ -401,33 +491,122 @@ class API:
         print("[MOVE] stop")
 
     async def imu_calibrate(self, mode=1):
-        imu_pkt = uart_cp.UcpImuCorrect()
+        imu_pkt = UcpImuCorrect()
         self.make_header(imu_pkt, UCP_IMU_CORRECTION_START)
         imu_pkt.mode = mode
+        self.ack_event.clear()
         await self.send_packet(imu_pkt)
         print(f"[IMU] Calibration start (mode={mode})")
+        try:
+            await asyncio.wait_for(self.ack_event.wait(), timeout=3)
+            print(f"[IMU] ACK: {self.last_ack}")
+        except asyncio.TimeoutError:
+            print("[IMU] Timeout waiting for ACK")
 
     async def over_the_air_update(self, version):
-        ota_pkt = uart_cp.UcpOta()
+        ota_pkt = UcpOta()
         self.make_header(ota_pkt, UCP_OTA)
         ota_pkt.version = version
         await self.send_packet(ota_pkt)
         print(f"[OTA] Requested update to version {version}")
 
+    async def imu_write(self, acc_bias, gyro_bias, mag_bias):
+        pkt = UcpImuW()
+        self.make_header(pkt, UCP_IMU_WRITE)
+        pkt.acc_bias_x, pkt.acc_bias_y, pkt.acc_bias_z = acc_bias
+        pkt.gyro_bias_x, pkt.gyro_bias_y, pkt.gyro_bias_z = gyro_bias
+        pkt.mag_bias_x, pkt.mag_bias_y, pkt.mag_bias_z = mag_bias
+        await self.send_packet(pkt)
+        print(f"[IMU_WRITE] Sent IMU bias values")
+    
+    async def mag_write(self, mag_bias):
+        pkt = UcpMagW()
+        self.make_header(pkt, UCP_MAG_WRITE)
+        pkt.mag_bias_x, pkt.mag_bias_y, pkt.mag_bias_z = mag_bias
+        await self.send_packet(pkt)
+        print(f"[MAG_WRITE] Sent MAG bias values")
+
+    async def imu_mag_read(self):
+        pkt = UcpImuR()
+        self.make_header(pkt, UCP_IMUMAG_READ)
+        self.ack_event.clear()
+
+        await self.send_packet(pkt)
+        print("[IMU_READ] Requested IMU/MAG data")
+
+        try:
+            await asyncio.wait_for(self.ack_event.wait(), timeout=2)
+            print(f"[IMU_READ] Data: {self.last_ack}")
+            return self.last_ack
+        except asyncio.TimeoutError:
+            print("[IMU_READ] Timeout waiting for IMU/MAG data")
+            return None
+
+
 # ===========================================================
 # ---- Example usage ----------------------------------------
 # ===========================================================
+# async def main():
+#     rover = API("192.168.11.1", 8888)
+#     await rover.connect()
+
+#     await rover.safe_ping()
+#     # await rover.ctrl_packet(60, 0)
+#     await asyncio.sleep(2)
+#     # await rover.ctrl_packet(0, 0)
+#     await rover.move(3, 60, 360)
+#     await asyncio.sleep(1)
+#     await rover.imu_mag_read()
+
+#     await rover.disconnect()
+
 async def main():
     rover = API("192.168.11.1", 8888)
     await rover.connect()
 
-    await rover.ping()
-    # await rover.ctrl_packet(60, 0)
-    await asyncio.sleep(2)
-    # await rover.ctrl_packet(0, 0)
-    # await rover.move(3, 60, 360)
+    # --- 1️⃣ Connection + Ping Test ---
+    print("\n[TEST] Pinging rover...")
+    await rover.safe_ping()
+    await asyncio.sleep(1)
 
+    # --- 2️⃣ Move / Control Packet Test ---
+    print("\n[TEST] Moving rover (speed=60, angular=360) for 3s...")
+    await rover.move(3, 60, 360)
+    await asyncio.sleep(1)
+
+    # --- 3️⃣ IMU Calibration ---
+    print("\n[TEST] Starting IMU calibration...")
+    await rover.imu_calibrate(mode=1)
+    await asyncio.sleep(2)
+
+    # --- 4️⃣ IMU / MAG Read ---
+    print("\n[TEST] Requesting IMU/MAG read...")
+    imu_data = await rover.imu_mag_read()
+    print(f"[RESULT] IMU/MAG Data: {imu_data}")
+    await asyncio.sleep(1)
+
+    # --- 5️⃣ IMU Write (Test Bias Values) ---
+    print("\n[TEST] Writing IMU bias values...")
+    acc_bias  = (100, 200, 300)
+    gyro_bias = (10, 20, 30)
+    mag_bias  = (1, 2, 3)
+    await rover.imu_write(acc_bias, gyro_bias, mag_bias)
+    await asyncio.sleep(1)
+
+    # --- 6️⃣ MAG Write (Test Bias Values) ---
+    print("\n[TEST] Writing MAG bias values...")
+    await rover.mag_write((5, 6, 7))
+    await asyncio.sleep(1)
+
+    # --- 7️⃣ OTA Update Simulation ---
+    print("\n[TEST] Requesting OTA update to version 42...")
+    await rover.over_the_air_update(42)
+    await asyncio.sleep(2)
+
+    # --- ✅ Done ---
+    print("\n[TEST] All commands sent. Disconnecting...")
     await rover.disconnect()
+
 
 if __name__ == "__main__":
     asyncio.run(main())
