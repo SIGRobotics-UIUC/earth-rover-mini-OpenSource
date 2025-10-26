@@ -501,44 +501,7 @@ class API:
         except asyncio.TimeoutError:
             print("[TELEMETRY] Timeout waiting for telemetry data")
             return None
-        '''
-         @property
-    def _motor_rpms_ft(self) -> dict[str, type]:
-        return {
-            "motor_Fl": float,
-            "motor_Fr": float,
-            "motor_Br": float,
-            "motor_Bl": float,
-        }
-    
-    @property
-    def _speed_and_heading_ft(self) -> dict[str, type]:
-        return {
-                "speed": float,
-                "heading": float,
-            }
-    
 
-    @property
-    def _imu_ft(self) -> dict[str, type]:
-        return {
-            "accel_x": float, "accel_y": float, "accel_z": float,
-            "gyro_x": float, "gyro_y": float, "gyro_z": float,
-            "mag_x": float, "mag_y": float, "mag_z": float
-        }
-
-    @property
-    def _cameras_ft(self) -> dict[str, tuple]:
-        return {
-            cam: (self.cameras[cam].height, self.cameras[cam].width, 3) for cam in self.cameras
-        }
-
-    @property
-    def observation_features(self) -> dict:
-        return {**self._motor_rpms_ft, **self._imu_ft, **self._speed_and_heading_ft, **self._cameras_ft}
-        
-    #should respond a dict of all these dicts merged together except for camera data
-'''
     async def ping(self):
         ping_pkt = UcpAlivePing()
         self.make_header(ping_pkt, UCP_KEEP_ALIVE)
@@ -577,6 +540,15 @@ class API:
         while time.time() - start < duration:
             await self.ctrl_packet(speed, angular)
             await asyncio.sleep(0.1)
+
+            try:
+                await asyncio.wait_for(self.telemetry_event.wait(), timeout=0.5)
+                data = self.last_telemetry
+                print(f"[MOVE] Telemetry update: RPM={data['rpm']}")
+                self.telemetry_event.clear()
+            except asyncio.TimeoutError:
+                print("[MOVE] No telemetry update")
+            
         await self.ctrl_packet(0, 0)
         print("[MOVE] stop")
 
@@ -662,40 +634,51 @@ async def main():
     # --- 2️⃣ Move / Control Packet Test ---
     print("\n[TEST] Moving rover (speed=60, angular=360) for 3s...")
     await rover.move(3, 60, 360)
+    x = 5
+    vals = {}
+    for i in range(5):
+        vals[time.time()] = await rover.get_telemetry()
+        # if vals:
+        #     print(f"[TELEMETRY {i+1}/5] {vals}")
+        # else:
+        #     print(f"[TELEMETRY {i+1}/5] No data received")
+        await asyncio.sleep(3 / x)  # spread 5 samples roughly across 3 seconds
     await asyncio.sleep(1)
 
-    # --- 3️⃣ IMU Calibration ---
-    print("\n[TEST] Starting IMU calibration...")
-    await rover.imu_calibrate(mode=1)
-    await asyncio.sleep(2)
+    print(vals)
 
-    # --- 4️⃣ IMU / MAG Read ---
-    print("\n[TEST] Requesting IMU/MAG read...")
-    imu_data = await rover.imu_mag_read()
-    print(f"[RESULT] IMU/MAG Data: {imu_data}")
-    await asyncio.sleep(1)
+    # # --- 3️⃣ IMU Calibration ---
+    # print("\n[TEST] Starting IMU calibration...")
+    # await rover.imu_calibrate(mode=1)
+    # await asyncio.sleep(2)
 
-    # --- 5️⃣ IMU Write (Test Bias Values) ---
-    print("\n[TEST] Writing IMU bias values...")
-    acc_bias  = (100, 200, 300)
-    gyro_bias = (10, 20, 30)
-    mag_bias  = (1, 2, 3)
-    await rover.imu_write(acc_bias, gyro_bias, mag_bias)
-    await asyncio.sleep(1)
+    # # --- 4️⃣ IMU / MAG Read ---
+    # print("\n[TEST] Requesting IMU/MAG read...")
+    # imu_data = await rover.imu_mag_read()
+    # print(f"[RESULT] IMU/MAG Data: {imu_data}")
+    # await asyncio.sleep(1)
 
-    # --- 6️⃣ MAG Write (Test Bias Values) ---
-    print("\n[TEST] Writing MAG bias values...")
-    await rover.mag_write((5, 6, 7))
-    await asyncio.sleep(1)
+    # # --- 5️⃣ IMU Write (Test Bias Values) ---
+    # print("\n[TEST] Writing IMU bias values...")
+    # acc_bias  = (100, 200, 300)
+    # gyro_bias = (10, 20, 30)
+    # mag_bias  = (1, 2, 3)
+    # await rover.imu_write(acc_bias, gyro_bias, mag_bias)
+    # await asyncio.sleep(1)
 
-    # --- 7️⃣ OTA Update Simulation ---
-    print("\n[TEST] Requesting OTA update to version 42...")
-    await rover.over_the_air_update(42)
-    await asyncio.sleep(2)
+    # # --- 6️⃣ MAG Write (Test Bias Values) ---
+    # print("\n[TEST] Writing MAG bias values...")
+    # await rover.mag_write((5, 6, 7))
+    # await asyncio.sleep(1)
 
-    # --- ✅ Done ---
-    print("\n[TEST] All commands sent. Disconnecting...")
-    await rover.disconnect()
+    # # --- 7️⃣ OTA Update Simulation ---
+    # print("\n[TEST] Requesting OTA update to version 42...")
+    # await rover.over_the_air_update(42)
+    # await asyncio.sleep(2)
+
+    # # --- ✅ Done ---
+    # print("\n[TEST] All commands sent. Disconnecting...")
+    # await rover.disconnect()
 
 
 if __name__ == "__main__":
