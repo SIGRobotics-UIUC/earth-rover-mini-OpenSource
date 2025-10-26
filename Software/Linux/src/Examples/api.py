@@ -1,4 +1,5 @@
-import socket, struct, asyncio, time
+import socket, struct, asyncio, time, contextlib
+from typing import Any
 from uart_cp import UCP_KEEP_ALIVE, UCP_MOTOR_CTL, UCP_IMU_CORRECTION_START, UCP_IMU_CORRECTION_END, UCP_RPM_REPORT, UCP_IMU_WRITE, UCP_MAG_WRITE, UCP_IMUMAG_READ, UCP_OTA, UCP_STATE
 from uart_cp import UcpErr, UcpImuCorrectionType, UcpHd, UcpAlivePing, UcpAlivePong, UcpCtlCmd, UcpImuCorrect, UcpImuCorrectAck, UcpRep, UcpMagW, UcpMagWAck, UcpImuW, UcpImuWAck, UcpImuR, UcpImuRAck, UcpOta, UcpOtaAck, UcpState
 
@@ -192,6 +193,8 @@ class API:
         self.running = False
         self.ack_event = asyncio.Event()
         self.last_ack = None
+        self.last_telemetry = None
+        self.telemetry_event = asyncio.Event()
         self.DECODE_MAP = {
             0x01: self.decode_pong,
             0x04: self.decode_imu_correct_ack,
@@ -386,7 +389,7 @@ class API:
 
     def decode_rpm_report(self, frame: bytes):
         pkt = UcpRep.from_buffer_copy(frame[2:-2])
-        return {
+        decoded = {
             "voltage": pkt.voltage / 100.0,
             "rpm": [pkt.rpm[i] for i in range(4)],
             "acc_g": [v / 16384.0 for v in pkt.acc],
@@ -398,6 +401,9 @@ class API:
             "error_code": pkt.error_code,
             "version": pkt.version,
         }
+        self.last_telemetry = decoded
+        self.telemetry_event.set()
+        return decoded
 
     def decode_imu_read_ack(self, frame: bytes):
         pkt = UcpImuRAck.from_buffer_copy(frame[2:-2])
@@ -449,6 +455,90 @@ class API:
 
 
     # API Commands
+
+    #need function to read telemetry data:rpm report 0x5
+    async def get_telemetry(self) -> dict[str, Any]:
+        
+        self.telemetry_event.clear()
+        try:
+            await asyncio.wait_for(self.telemetry_event.wait(), timeout=2)
+            if self.last_telemetry is None:
+                return None
+            
+            data = self.last_telemetry
+            
+            # Motor RPMs: [Fl, Fr, Bl, Br] -> [Fl, Fr, Br, Bl]
+            motor_rpms = {
+                "motor_Fl": data["rpm"][0],
+                "motor_Fr": data["rpm"][1],
+                "motor_Br": data["rpm"][3],
+                "motor_Bl": data["rpm"][2],
+            }
+            
+            # Speed and heading (speed is average RPM converted to speed)
+            avg_rpm = sum(data["rpm"]) / 4.0
+            speed_and_heading = {
+                "speed": avg_rpm,  
+                "heading": data["heading_deg"],
+            }
+            
+            # IMU data
+            imu = {
+                "accel_x": data["acc_ms2"][0],
+                "accel_y": data["acc_ms2"][1],
+                "accel_z": data["acc_ms2"][2],
+                "gyro_x": data["gyro_dps"][0],
+                "gyro_y": data["gyro_dps"][1],
+                "gyro_z": data["gyro_dps"][2],
+                "mag_x": data["mag_uT"][0],
+                "mag_y": data["mag_uT"][1],
+                "mag_z": data["mag_uT"][2],
+            }
+            
+            # Merge all observations
+            return {**motor_rpms, **speed_and_heading, **imu}
+            
+        except asyncio.TimeoutError:
+            print("[TELEMETRY] Timeout waiting for telemetry data")
+            return None
+        '''
+         @property
+    def _motor_rpms_ft(self) -> dict[str, type]:
+        return {
+            "motor_Fl": float,
+            "motor_Fr": float,
+            "motor_Br": float,
+            "motor_Bl": float,
+        }
+    
+    @property
+    def _speed_and_heading_ft(self) -> dict[str, type]:
+        return {
+                "speed": float,
+                "heading": float,
+            }
+    
+
+    @property
+    def _imu_ft(self) -> dict[str, type]:
+        return {
+            "accel_x": float, "accel_y": float, "accel_z": float,
+            "gyro_x": float, "gyro_y": float, "gyro_z": float,
+            "mag_x": float, "mag_y": float, "mag_z": float
+        }
+
+    @property
+    def _cameras_ft(self) -> dict[str, tuple]:
+        return {
+            cam: (self.cameras[cam].height, self.cameras[cam].width, 3) for cam in self.cameras
+        }
+
+    @property
+    def observation_features(self) -> dict:
+        return {**self._motor_rpms_ft, **self._imu_ft, **self._speed_and_heading_ft, **self._cameras_ft}
+        
+    #should respond a dict of all these dicts merged together except for camera data
+'''
     async def ping(self):
         ping_pkt = UcpAlivePing()
         self.make_header(ping_pkt, UCP_KEEP_ALIVE)
