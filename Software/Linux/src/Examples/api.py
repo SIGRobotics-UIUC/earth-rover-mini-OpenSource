@@ -1,4 +1,4 @@
-import socket, struct, asyncio, time, contextlib
+import socket, struct, asyncio, time, contextlib, copy
 from typing import Any
 from uart_cp import UCP_KEEP_ALIVE, UCP_MOTOR_CTL, UCP_IMU_CORRECTION_START, UCP_IMU_CORRECTION_END, UCP_RPM_REPORT, UCP_IMU_WRITE, UCP_MAG_WRITE, UCP_IMUMAG_READ, UCP_OTA, UCP_STATE
 from uart_cp import UcpErr, UcpImuCorrectionType, UcpHd, UcpAlivePing, UcpAlivePong, UcpCtlCmd, UcpImuCorrect, UcpImuCorrectAck, UcpRep, UcpMagW, UcpMagWAck, UcpImuW, UcpImuWAck, UcpImuR, UcpImuRAck, UcpOta, UcpOtaAck, UcpState
@@ -210,7 +210,7 @@ class API:
         self.reader, self.writer = await asyncio.open_connection(self.ip, self.port)
         print(f"[API] Connected to rover at {self.ip}:{self.port}")
         self.running = True
-        asyncio.create_task(self.reader_loop())  # background read loop
+        self.reader_task = asyncio.create_task(self.reader_loop())  # background read loop
 
     async def disconnect(self):
         if self.writer:
@@ -290,7 +290,7 @@ class API:
         buf = self.build_frame(packet)
         self.writer.write(buf)
         await self.writer.drain()
-        print(f"[SEND] ID={packet.hd.id:02X}, Len={len(buf)}, CRC=0x{self.crc16(buf[:-2]):04X}")
+        # print(f"[SEND] ID={packet.hd.id:02X}, Len={len(buf)}, CRC=0x{self.crc16(buf[:-2]):04X}")
 
     # Async Reader
     async def reader_loop(self):
@@ -320,7 +320,7 @@ class API:
                 break
             except Exception as e:
                 print(f"[READER] Error: {e}")
-                break
+                continue
 
         print("[READER] Exiting...")
 
@@ -457,50 +457,97 @@ class API:
     # API Commands
 
     #need function to read telemetry data:rpm report 0x5
-    async def get_telemetry(self) -> dict[str, Any]:
+    # async def get_telemetry(self) -> dict[str, Any]:
         
-        self.telemetry_event.clear()
-        try:
-            await asyncio.wait_for(self.telemetry_event.wait(), timeout=2)
-            if self.last_telemetry is None:
+    #     self.telemetry_event.clear()
+    #     try:
+    #         await asyncio.wait_for(self.telemetry_event.wait(), timeout=2)
+    #         if self.last_telemetry is None:
+    #             return None
+            
+    #         data = self.last_telemetry
+            
+    #         # Motor RPMs: [Fl, Fr, Bl, Br] -> [Fl, Fr, Br, Bl]
+    #         motor_rpms = {
+    #             "motor_Fl": data["rpm"][0],
+    #             "motor_Fr": data["rpm"][1],
+    #             "motor_Br": data["rpm"][3],
+    #             "motor_Bl": data["rpm"][2],
+    #         }
+            
+    #         # Speed and heading (speed is average RPM converted to speed)
+    #         avg_rpm = sum(data["rpm"]) / 4.0
+    #         speed_and_heading = {
+    #             "speed": avg_rpm,  
+    #             "heading": data["heading_deg"],
+    #         }
+            
+    #         # IMU data
+    #         imu = {
+    #             "accel_x": data["acc_ms2"][0],
+    #             "accel_y": data["acc_ms2"][1],
+    #             "accel_z": data["acc_ms2"][2],
+    #             "gyro_x": data["gyro_dps"][0],
+    #             "gyro_y": data["gyro_dps"][1],
+    #             "gyro_z": data["gyro_dps"][2],
+    #             "mag_x": data["mag_uT"][0],
+    #             "mag_y": data["mag_uT"][1],
+    #             "mag_z": data["mag_uT"][2],
+    #         }
+            
+    #         # Merge all observations
+    #         return {**motor_rpms, **speed_and_heading, **imu}
+            
+    #     except asyncio.TimeoutError:
+    #         print("[TELEMETRY] Timeout waiting for telemetry data")
+    #         return None
+
+    async def get_telemetry(self) -> dict[str, Any]:
+        """
+        Non-blocking snapshot of the most recent telemetry data.
+        Returns a shallow copy of the latest parsed 0x05 frame,
+        or waits briefly if none is available yet.
+        """
+        # If no telemetry yet, wait briefly (but don't interfere with move())
+        if self.last_telemetry is None:
+            try:
+                await asyncio.wait_for(self.telemetry_event.wait(), timeout=2)
+            except asyncio.TimeoutError:
+                print("[TELEMETRY] Timeout waiting for first telemetry data")
                 return None
-            
-            data = self.last_telemetry
-            
-            # Motor RPMs: [Fl, Fr, Bl, Br] -> [Fl, Fr, Br, Bl]
-            motor_rpms = {
-                "motor_Fl": data["rpm"][0],
-                "motor_Fr": data["rpm"][1],
-                "motor_Br": data["rpm"][3],
-                "motor_Bl": data["rpm"][2],
-            }
-            
-            # Speed and heading (speed is average RPM converted to speed)
-            avg_rpm = sum(data["rpm"]) / 4.0
-            speed_and_heading = {
-                "speed": avg_rpm,  
-                "heading": data["heading_deg"],
-            }
-            
-            # IMU data
-            imu = {
-                "accel_x": data["acc_ms2"][0],
-                "accel_y": data["acc_ms2"][1],
-                "accel_z": data["acc_ms2"][2],
-                "gyro_x": data["gyro_dps"][0],
-                "gyro_y": data["gyro_dps"][1],
-                "gyro_z": data["gyro_dps"][2],
-                "mag_x": data["mag_uT"][0],
-                "mag_y": data["mag_uT"][1],
-                "mag_z": data["mag_uT"][2],
-            }
-            
-            # Merge all observations
-            return {**motor_rpms, **speed_and_heading, **imu}
-            
-        except asyncio.TimeoutError:
-            print("[TELEMETRY] Timeout waiting for telemetry data")
+
+        # Shallow copy to avoid shared-state mutation
+        data = copy.deepcopy(self.last_telemetry)
+
+        if not data:
             return None
+
+        motor_rpms = {
+            "motor_Fl": data["rpm"][0],
+            "motor_Fr": data["rpm"][1],
+            "motor_Br": data["rpm"][3],
+            "motor_Bl": data["rpm"][2],
+        }
+
+        avg_rpm = sum(data["rpm"]) / 4.0
+        speed_and_heading = {
+            "speed": avg_rpm,
+            "heading": data["heading_deg"],
+        }
+
+        imu = {
+            "accel_x": data["acc_ms2"][0],
+            "accel_y": data["acc_ms2"][1],
+            "accel_z": data["acc_ms2"][2],
+            "gyro_x": data["gyro_dps"][0],
+            "gyro_y": data["gyro_dps"][1],
+            "gyro_z": data["gyro_dps"][2],
+            "mag_x": data["mag_uT"][0],
+            "mag_y": data["mag_uT"][1],
+            "mag_z": data["mag_uT"][2],
+        }
+
+        return {**motor_rpms, **speed_and_heading, **imu}
 
     async def ping(self):
         ping_pkt = UcpAlivePing()
@@ -633,52 +680,63 @@ async def main():
 
     # --- 2️⃣ Move / Control Packet Test ---
     print("\n[TEST] Moving rover (speed=60, angular=360) for 3s...")
-    await rover.move(3, 60, 360)
+
+    # Start the movement task (async)
+    move_task = asyncio.create_task(rover.move(3, 60, 360))
+
+    # Take 5 telemetry samples spaced evenly across the movement duration
     x = 5
     vals = {}
-    for i in range(5):
-        vals[time.time()] = await rover.get_telemetry()
-        # if vals:
-        #     print(f"[TELEMETRY {i+1}/5] {vals}")
-        # else:
-        #     print(f"[TELEMETRY {i+1}/5] No data received")
-        await asyncio.sleep(3 / x)  # spread 5 samples roughly across 3 seconds
+    for i in range(x):
+        telemetry = await rover.get_telemetry()  # snapshot (non-blocking)
+        vals[time.time()] = telemetry
+
+        if telemetry:
+            print(f"[TELEMETRY {i+1}/5] RPM={telemetry.get('speed'):.1f}, Heading={telemetry.get('heading'):.1f}")
+        else:
+            print(f"[TELEMETRY {i+1}/5] No data received")
+
+        await asyncio.sleep(3 / x)  # space samples across ~3 seconds
+
+    # Wait for the move() to finish cleanly
+    await move_task
+
     await asyncio.sleep(1)
 
     print(vals)
 
-    # # --- 3️⃣ IMU Calibration ---
-    # print("\n[TEST] Starting IMU calibration...")
-    # await rover.imu_calibrate(mode=1)
-    # await asyncio.sleep(2)
+    # --- 3️⃣ IMU Calibration ---
+    print("\n[TEST] Starting IMU calibration...")
+    await rover.imu_calibrate(mode=1)
+    await asyncio.sleep(2)
 
-    # # --- 4️⃣ IMU / MAG Read ---
-    # print("\n[TEST] Requesting IMU/MAG read...")
-    # imu_data = await rover.imu_mag_read()
-    # print(f"[RESULT] IMU/MAG Data: {imu_data}")
-    # await asyncio.sleep(1)
+    # --- 4️⃣ IMU / MAG Read ---
+    print("\n[TEST] Requesting IMU/MAG read...")
+    imu_data = await rover.imu_mag_read()
+    print(f"[RESULT] IMU/MAG Data: {imu_data}")
+    await asyncio.sleep(1)
 
-    # # --- 5️⃣ IMU Write (Test Bias Values) ---
-    # print("\n[TEST] Writing IMU bias values...")
-    # acc_bias  = (100, 200, 300)
-    # gyro_bias = (10, 20, 30)
-    # mag_bias  = (1, 2, 3)
-    # await rover.imu_write(acc_bias, gyro_bias, mag_bias)
-    # await asyncio.sleep(1)
+    # --- 5️⃣ IMU Write (Test Bias Values) ---
+    print("\n[TEST] Writing IMU bias values...")
+    acc_bias  = (100, 200, 300)
+    gyro_bias = (10, 20, 30)
+    mag_bias  = (1, 2, 3)
+    await rover.imu_write(acc_bias, gyro_bias, mag_bias)
+    await asyncio.sleep(1)
 
-    # # --- 6️⃣ MAG Write (Test Bias Values) ---
-    # print("\n[TEST] Writing MAG bias values...")
-    # await rover.mag_write((5, 6, 7))
-    # await asyncio.sleep(1)
+    # --- 6️⃣ MAG Write (Test Bias Values) ---
+    print("\n[TEST] Writing MAG bias values...")
+    await rover.mag_write((5, 6, 7))
+    await asyncio.sleep(1)
 
-    # # --- 7️⃣ OTA Update Simulation ---
-    # print("\n[TEST] Requesting OTA update to version 42...")
-    # await rover.over_the_air_update(42)
-    # await asyncio.sleep(2)
+    # --- 7️⃣ OTA Update Simulation ---
+    print("\n[TEST] Requesting OTA update to version 42...")
+    await rover.over_the_air_update(42)
+    await asyncio.sleep(2)
 
-    # # --- ✅ Done ---
-    # print("\n[TEST] All commands sent. Disconnecting...")
-    # await rover.disconnect()
+    # --- ✅ Done ---
+    print("\n[TEST] All commands sent. Disconnecting...")
+    await rover.disconnect()
 
 
 if __name__ == "__main__":
