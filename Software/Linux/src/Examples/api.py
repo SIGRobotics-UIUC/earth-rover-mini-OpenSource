@@ -1,7 +1,37 @@
 import socket, struct, asyncio, time, contextlib, copy
 from typing import Any
-from uart_cp import UCP_KEEP_ALIVE, UCP_MOTOR_CTL, UCP_IMU_CORRECTION_START, UCP_IMU_CORRECTION_END, UCP_RPM_REPORT, UCP_IMU_WRITE, UCP_MAG_WRITE, UCP_IMUMAG_READ, UCP_OTA, UCP_STATE
-from uart_cp import UcpErr, UcpImuCorrectionType, UcpHd, UcpAlivePing, UcpAlivePong, UcpCtlCmd, UcpImuCorrect, UcpImuCorrectAck, UcpRep, UcpMagW, UcpMagWAck, UcpImuW, UcpImuWAck, UcpImuR, UcpImuRAck, UcpOta, UcpOtaAck, UcpState
+from .uart_cp import (
+    UCP_KEEP_ALIVE,
+    UCP_MOTOR_CTL,
+    UCP_IMU_CORRECTION_START,
+    UCP_IMU_CORRECTION_END,
+    UCP_RPM_REPORT,
+    UCP_IMU_WRITE,
+    UCP_MAG_WRITE,
+    UCP_IMUMAG_READ,
+    UCP_OTA,
+    UCP_STATE,
+)
+from .uart_cp import (
+    UcpErr,
+    UcpImuCorrectionType,
+    UcpHd,
+    UcpAlivePing,
+    UcpAlivePong,
+    UcpCtlCmd,
+    UcpImuCorrect,
+    UcpImuCorrectAck,
+    UcpRep,
+    UcpMagW,
+    UcpMagWAck,
+    UcpImuW,
+    UcpImuWAck,
+    UcpImuR,
+    UcpImuRAck,
+    UcpOta,
+    UcpOtaAck,
+    UcpState,
+)
 
 
 
