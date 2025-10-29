@@ -105,8 +105,10 @@ if __name__ == "__main__":
     sock = socket.create_connection((rover_ip, rover_port))  # make sure Rover IP and port aligns with tcp_bridge
     sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
     
-    try:
-        input("Press enter to move forward...")
+    while True:
+        i = input("Press anything to move forward, s to stop...")
+        if i == 's':
+            break
         move_forward(sock, duration=1.0)
         
         # input("Press enter to move backward...")
@@ -115,6 +117,5 @@ if __name__ == "__main__":
         # input("Press enter to change angle...")
         # change_angle(sock)
 
-    finally:
-        sock.close()
-        print('Connection closed')
+    sock.close()
+    print('Connection closed')

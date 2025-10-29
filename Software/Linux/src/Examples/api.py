@@ -16,6 +16,10 @@ UCP_IMUMAG_READ          = 0x8
 UCP_OTA                  = 0x9
 UCP_STATE                = 0xA
 
+PRINT_DEBUG = False
+def debug_print(*args, **kwargs):
+    if PRINT_DEBUG:
+        print(*args, **kwargs)
 
 class api_structure:
     def __init__(self, ip, port=5500):
@@ -181,7 +185,7 @@ class api_structure:
 # ===========================================================
 # ---- Async API Structure Class ----------------------------
 # ===========================================================
-class API:
+class EarthRoverMini:
     HEADER = b"\xFD\xFF"
     # HEADER = b"\xFF\xFD"
 
@@ -208,7 +212,7 @@ class API:
     # Connection Handling
     async def connect(self):
         self.reader, self.writer = await asyncio.open_connection(self.ip, self.port)
-        print(f"[API] Connected to rover at {self.ip}:{self.port}")
+        debug_print(f"[API] Connected to rover at {self.ip}:{self.port}")
         self.running = True
         self.reader_task = asyncio.create_task(self.reader_loop())  # background read loop
 
@@ -217,7 +221,7 @@ class API:
             self.running = False
             self.writer.close()
             await self.writer.wait_closed()
-            print("[API] Disconnected from rover")
+            debug_print("[API] Disconnected from rover")
         if hasattr(self, "reader_task"):
             self.reader_task.cancel()
             with contextlib.suppress(asyncio.CancelledError):
@@ -311,7 +315,7 @@ class API:
                 frames, buf = self.extract_frames(buf)
 
                 if frames:
-                    print(f"[DEBUG] Got {len(frames)} frame(s), buf_remain={len(buf)} bytes")
+                    debug_print(f"[DEBUG] Got {len(frames)} frame(s), buf_remain={len(buf)} bytes")
 
                 for frame in frames:
                     await self.read(frame)
@@ -319,7 +323,7 @@ class API:
             except asyncio.CancelledError:
                 break
             except Exception as e:
-                print(f"[READER] Error: {e}")
+                debug_print(f"[READER] Error: {e}")
                 continue
 
         print("[READER] Exiting...")
@@ -366,7 +370,7 @@ class API:
                 frames.append(frame)
                 i = sync_index + total_len
             else:
-                print(f"[FRAME] Bad CRC @ {sync_index}: expected={expected_crc:04X}, got={computed_crc:04X}")
+                debug_print(f"[FRAME] Bad CRC @ {sync_index}: expected={expected_crc:04X}, got={computed_crc:04X}")
                 i = sync_index + 1  # resync one byte forward
 
         return frames, buf[i:]
@@ -431,7 +435,7 @@ class API:
     def decode_unknown(self, frame: bytes):
         pkt_id = frame[4]
         payload = frame[6:-2]
-        print(f"[WARN] Unknown packet ID 0x{pkt_id:02X}, payload={payload.hex()}")
+        debug_print(f"[WARN] Unknown packet ID 0x{pkt_id:02X}, payload={payload.hex()}")
         return {"raw_payload": payload.hex()}
 
     
@@ -516,7 +520,7 @@ class API:
                 print("[TELEMETRY] Timeout waiting for first telemetry data")
                 return None
 
-        # Shallow copy to avoid shared-state mutation
+        # Deep copy to avoid shared-state mutation
         data = copy.deepcopy(self.last_telemetry)
 
         if not data:
@@ -663,7 +667,7 @@ class API:
 #     # await rover.ctrl_packet(60, 0)
 #     await asyncio.sleep(2)
 #     # await rover.ctrl_packet(0, 0)
-#     await rover.move(3, 60, 360)
+#     await rover.move(3, -100, 0)
 #     await asyncio.sleep(1)
 #     await rover.imu_mag_read()
 
@@ -673,12 +677,12 @@ async def main():
     rover = API("192.168.11.1", 8888)
     await rover.connect()
 
-    # --- 1️⃣ Connection + Ping Test ---
+    # # --- 1️⃣ Connection + Ping Test ---
     print("\n[TEST] Pinging rover...")
     await rover.safe_ping()
     await asyncio.sleep(1)
 
-    # --- 2️⃣ Move / Control Packet Test ---
+    # # --- 2️⃣ Move / Control Packet Test ---
     print("\n[TEST] Moving rover (speed=60, angular=360) for 3s...")
 
     # Start the movement task (async)
@@ -705,18 +709,18 @@ async def main():
 
     print(vals)
 
-    # --- 3️⃣ IMU Calibration ---
+    # # --- 3️⃣ IMU Calibration ---
     print("\n[TEST] Starting IMU calibration...")
     await rover.imu_calibrate(mode=1)
     await asyncio.sleep(2)
 
-    # --- 4️⃣ IMU / MAG Read ---
+    # # --- 4️⃣ IMU / MAG Read ---
     print("\n[TEST] Requesting IMU/MAG read...")
     imu_data = await rover.imu_mag_read()
     print(f"[RESULT] IMU/MAG Data: {imu_data}")
     await asyncio.sleep(1)
 
-    # --- 5️⃣ IMU Write (Test Bias Values) ---
+    # # --- 5️⃣ IMU Write (Test Bias Values) ---
     print("\n[TEST] Writing IMU bias values...")
     acc_bias  = (100, 200, 300)
     gyro_bias = (10, 20, 30)
@@ -724,17 +728,17 @@ async def main():
     await rover.imu_write(acc_bias, gyro_bias, mag_bias)
     await asyncio.sleep(1)
 
-    # --- 6️⃣ MAG Write (Test Bias Values) ---
+    # # --- 6️⃣ MAG Write (Test Bias Values) ---
     print("\n[TEST] Writing MAG bias values...")
     await rover.mag_write((5, 6, 7))
     await asyncio.sleep(1)
 
-    # --- 7️⃣ OTA Update Simulation ---
-    print("\n[TEST] Requesting OTA update to version 42...")
-    await rover.over_the_air_update(42)
-    await asyncio.sleep(2)
+    # # --- 7️⃣ OTA Update Simulation ---
+    # print("\n[TEST] Requesting OTA update to version 42...")
+    # await rover.over_the_air_update(42)
+    # await asyncio.sleep(2)
 
-    # --- ✅ Done ---
+    # # --- ✅ Done ---
     print("\n[TEST] All commands sent. Disconnecting...")
     await rover.disconnect()
 
