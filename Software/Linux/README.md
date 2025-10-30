@@ -116,3 +116,14 @@ sudo -E /mnt/c/Users/Hasan/OneDrive/Desktop/SIGRobotics/platform-tools-latest-wi
 python3 camera.py
 ```
 This will open a window displaying the real-time video stream from the Earth Rover Mini’s onboard camera.
+
+
+# Remote Teleoperation
+The Earth Rover Mini comes with a 4G module and we provide a network stack that allows you to drive your Earth Rover from anywhere, including:
+- A ready-to-use web interface 👉 [link](https://my.frodobots.com)
+- An SDK for developers 👉 [link](https://github.com/frodobots-org/earth-rovers-sdk)
+
+## How to use SDK:
+1. [Activate your robot](https://discord.com/invite/N7vEWB6Jdu)
+2. Contact us to obtain a token
+3. Start using the SDK
