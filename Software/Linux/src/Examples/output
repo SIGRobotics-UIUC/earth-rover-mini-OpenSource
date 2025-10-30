@@ -1,0 +1,971 @@
+[API] Connected to rover at 192.168.11.1:8888
+
+[TEST] Pinging rover...
+[DEBUG] hdr.len=4, sizeof(packet)=4
+[READER] Started async read loop
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[PKT 01] {'ack': 0}
+[PING] ACK received: {'ack': 0}
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[PKT 05] {'voltage': 0.55, 'rpm': [0, 0, 0, 0], 'acc_g': [-0.00042724609375, 0.021728515625, 0.99847412109375], 'acc_ms2': [-0.004189852905273437, 0.21308394775390624, 9.791686239624022], 'gyro_dps': [0.05343511450381679, 0.0, -0.022900763358778626], 'mag_uT': [-182.185, -1.1620000000000001, -125.33000000000001], 'heading_deg': 2.69, 'stop_switch': 1, 'error_code': 108, 'version': 41}
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[PKT 01] {'ack': 0}
+[FRAME] Bad CRC @ 0: expected=0000, got=49DB
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[FRAME] Bad CRC @ 0: expected=0000, got=A551
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+
+[TEST] Moving rover (speed=60, angular=360) for 3s...
+[MOVE] speed=60, angular=360
+[DEBUG] hdr.len=20, sizeof(packet)=20
+[CTRL] speed=60, angular=360
+[FRAME] Bad CRC @ 0: expected=0000, got=CD05
+[DEBUG] Got 2 frame(s), buf_remain=0 bytes
+[PKT 05] {'voltage': 0.55, 'rpm': [0, 0, 0, 0], 'acc_g': [-0.00653076171875, 0.0184326171875, 1.00604248046875], 'acc_ms2': [-0.06404489440917968, 0.18076222534179687, 9.865906491088866], 'gyro_dps': [0.03816793893129771, -0.007633587786259542, -0.030534351145038167], 'mag_uT': [-184.17700000000002, -1.992, -126.07700000000001], 'heading_deg': 2.69, 'stop_switch': 1, 'error_code': 108, 'version': 41}
+[FRAME] Bad CRC @ 0: expected=0000, got=6836
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[MOVE] Telemetry update: RPM=[0, 0, 0, 0]
+[DEBUG] hdr.len=20, sizeof(packet)=20
+[CTRL] speed=60, angular=360
+[FRAME] Bad CRC @ 0: expected=0000, got=7C9A
+[DEBUG] Got 2 frame(s), buf_remain=0 bytes
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[MOVE] Telemetry update: RPM=[1, 0, 1, 0]
+[DEBUG] hdr.len=20, sizeof(packet)=20
+[CTRL] speed=60, angular=360
+[DEBUG] Got 2 frame(s), buf_remain=0 bytes
+[FRAME] Bad CRC @ 0: expected=0000, got=550E
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[MOVE] Telemetry update: RPM=[1, 0, 1, 0]
+[DEBUG] hdr.len=20, sizeof(packet)=20
+[CTRL] speed=60, angular=360
+[FRAME] Bad CRC @ 0: expected=0002, got=9C2C
+[FRAME] Bad CRC @ 0: expected=408D, got=D583
+[DEBUG] Got 1 frame(s), buf_remain=32 bytes
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[FRAME] Bad CRC @ 0: expected=0002, got=6FDE
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[MOVE] Telemetry update: RPM=[12, 2, 12, 2]
+[DEBUG] hdr.len=20, sizeof(packet)=20
+[CTRL] speed=60, angular=360
+[DEBUG] Got 3 frame(s), buf_remain=0 bytes
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[MOVE] Telemetry update: RPM=[28, 6, 28, 6]
+[DEBUG] hdr.len=20, sizeof(packet)=20
+[CTRL] speed=60, angular=360
+[FRAME] Bad CRC @ 0: expected=0009, got=4EBC
+[DEBUG] Got 2 frame(s), buf_remain=0 bytes
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[MOVE] Telemetry update: RPM=[45, 9, 45, 9]
+[DEBUG] hdr.len=20, sizeof(packet)=20
+[CTRL] speed=60, angular=360
+[FRAME] Bad CRC @ 0: expected=000D, got=B29F
+[DEBUG] Got 3 frame(s), buf_remain=0 bytes
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[MOVE] Telemetry update: RPM=[62, 13, 62, 13]
+[DEBUG] hdr.len=20, sizeof(packet)=20
+[CTRL] speed=60, angular=360
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[DEBUG] Got 2 frame(s), buf_remain=0 bytes
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[MOVE] Telemetry update: RPM=[82, 16, 82, 16]
+[DEBUG] hdr.len=20, sizeof(packet)=20
+[CTRL] speed=60, angular=360
+[DEBUG] Got 3 frame(s), buf_remain=0 bytes
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[MOVE] Telemetry update: RPM=[104, 20, 104, 20]
+[DEBUG] hdr.len=20, sizeof(packet)=20
+[CTRL] speed=60, angular=360
+[DEBUG] Got 3 frame(s), buf_remain=0 bytes
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[MOVE] Telemetry update: RPM=[124, 24, 124, 24]
+[DEBUG] hdr.len=20, sizeof(packet)=20
+[CTRL] speed=60, angular=360
+[FRAME] Bad CRC @ 0: expected=FFFD, got=7994
+[DEBUG] Got 2 frame(s), buf_remain=0 bytes
+[PKT 05] {'voltage': 0.54, 'rpm': [124, 24, 124, 24], 'acc_g': [0.09869384765625, 0.0478515625, 1.06805419921875], 'acc_ms2': [0.967856021118164, 0.469263525390625, 10.474033712768554], 'gyro_dps': [1.1450381679389312, 0.3816793893129771, -20.083969465648856], 'mag_uT': [77.27300000000001, -98.18900000000001, -219.61800000000002], 'heading_deg': 0.43, 'stop_switch': 4, 'error_code': 108, 'version': 41}
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[MOVE] Telemetry update: RPM=[146, 27, 146, 27]
+[DEBUG] hdr.len=20, sizeof(packet)=20
+[CTRL] speed=60, angular=360
+[DEBUG] Got 3 frame(s), buf_remain=0 bytes
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[MOVE] Telemetry update: RPM=[169, 31, 169, 31]
+[DEBUG] hdr.len=20, sizeof(packet)=20
+[CTRL] speed=60, angular=360
+[DEBUG] Got 3 frame(s), buf_remain=0 bytes
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[MOVE] Telemetry update: RPM=[191, 35, 191, 35]
+[DEBUG] hdr.len=20, sizeof(packet)=20
+[CTRL] speed=60, angular=360
+[DEBUG] Got 3 frame(s), buf_remain=0 bytes
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[MOVE] Telemetry update: RPM=[204, 36, 204, 36]
+[DEBUG] hdr.len=20, sizeof(packet)=20
+[CTRL] speed=60, angular=360
+[DEBUG] Got 3 frame(s), buf_remain=0 bytes
+[FRAME] Bad CRC @ 0: expected=0024, got=EB01
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[MOVE] Telemetry update: RPM=[204, 36, 204, 36]
+[DEBUG] hdr.len=20, sizeof(packet)=20
+[CTRL] speed=60, angular=360
+[DEBUG] Got 3 frame(s), buf_remain=0 bytes
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[MOVE] Telemetry update: RPM=[211, 36, 211, 36]
+[DEBUG] hdr.len=20, sizeof(packet)=20
+[CTRL] speed=60, angular=360
+[DEBUG] Got 3 frame(s), buf_remain=0 bytes
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[MOVE] Telemetry update: RPM=[216, 36, 216, 36]
+[DEBUG] hdr.len=20, sizeof(packet)=20
+[CTRL] speed=60, angular=360
+[DEBUG] Got 3 frame(s), buf_remain=0 bytes
+[FRAME] Bad CRC @ 0: expected=0025, got=0D1A
+[MOVE] Telemetry update: RPM=[220, 37, 220, 37]
+[DEBUG] hdr.len=20, sizeof(packet)=20
+[CTRL] speed=60, angular=360
+[FRAME] Bad CRC @ 0: expected=0025, got=DA7F
+[FRAME] Bad CRC @ 0: expected=0025, got=42AC
+[DEBUG] Got 2 frame(s), buf_remain=0 bytes
+[FRAME] Bad CRC @ 0: expected=0025, got=B1A4
+[MOVE] Telemetry update: RPM=[224, 37, 224, 37]
+[DEBUG] hdr.len=20, sizeof(packet)=20
+[CTRL] speed=60, angular=360
+[FRAME] Bad CRC @ 0: expected=0025, got=B024
+[DEBUG] Got 2 frame(s), buf_remain=0 bytes
+[FRAME] Bad CRC @ 0: expected=0026, got=CCC3
+[FRAME] Bad CRC @ 0: expected=0026, got=EE26
+[MOVE] Telemetry update: RPM=[224, 37, 224, 37]
+[DEBUG] hdr.len=20, sizeof(packet)=20
+[CTRL] speed=60, angular=360
+[FRAME] Bad CRC @ 0: expected=0026, got=9A46
+[FRAME] Bad CRC @ 0: expected=F8FF, got=E394
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[FRAME] Bad CRC @ 0: expected=0026, got=1B4E
+[FRAME] Bad CRC @ 0: expected=0026, got=387B
+[MOVE] Telemetry update: RPM=[225, 38, 225, 38]
+[DEBUG] hdr.len=20, sizeof(packet)=20
+[CTRL] speed=60, angular=360
+[FRAME] Bad CRC @ 0: expected=0026, got=66F0
+[DEBUG] Got 2 frame(s), buf_remain=32 bytes
+[PKT 05] {'voltage': 0.52, 'rpm': [229, 38, 229, 38], 'acc_g': [0.09539794921875, 0.074951171875, 1.00653076171875], 'acc_ms2': [0.9355342987060546, 0.7350199096679687, 9.87069489440918], 'gyro_dps': [1.251908396946565, -2.015267175572519, -24.870229007633586], 'mag_uT': [-38.512, 103.99900000000001, -254.395], 'heading_deg': 1.76, 'stop_switch': 8, 'error_code': 108, 'version': 41}
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[FRAME] Bad CRC @ 0: expected=0026, got=2052
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[MOVE] Telemetry update: RPM=[234, 38, 234, 38]
+[DEBUG] hdr.len=20, sizeof(packet)=20
+[CTRL] speed=60, angular=360
+[DEBUG] Got 3 frame(s), buf_remain=0 bytes
+[FRAME] Bad CRC @ 0: expected=0026, got=981F
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[MOVE] Telemetry update: RPM=[233, 38, 233, 38]
+[DEBUG] hdr.len=20, sizeof(packet)=20
+[CTRL] speed=60, angular=360
+[FRAME] Bad CRC @ 0: expected=0026, got=7E8C
+[DEBUG] Got 2 frame(s), buf_remain=0 bytes
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[MOVE] Telemetry update: RPM=[233, 38, 233, 38]
+[DEBUG] hdr.len=20, sizeof(packet)=20
+[CTRL] speed=60, angular=360
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[DEBUG] Got 2 frame(s), buf_remain=0 bytes
+[FRAME] Bad CRC @ 0: expected=0027, got=D74B
+[FRAME] Bad CRC @ 0: expected=0027, got=E6E1
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[MOVE] Telemetry update: RPM=[236, 39, 236, 39]
+[DEBUG] hdr.len=20, sizeof(packet)=20
+[CTRL] speed=60, angular=360
+[DEBUG] Got 3 frame(s), buf_remain=0 bytes
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[MOVE] Telemetry update: RPM=[236, 39, 236, 39]
+[DEBUG] hdr.len=20, sizeof(packet)=20
+[CTRL] speed=60, angular=360
+[DEBUG] Got 3 frame(s), buf_remain=0 bytes
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[MOVE] Telemetry update: RPM=[237, 39, 237, 39]
+[DEBUG] hdr.len=20, sizeof(packet)=20
+[CTRL] speed=60, angular=360
+[FRAME] Bad CRC @ 0: expected=0027, got=56AD
+[DEBUG] Got 3 frame(s), buf_remain=0 bytes
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[MOVE] Telemetry update: RPM=[241, 39, 241, 39]
+[DEBUG] hdr.len=20, sizeof(packet)=20
+[CTRL] speed=60, angular=360
+[DEBUG] Got 2 frame(s), buf_remain=32 bytes
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[MOVE] Telemetry update: RPM=[243, 39, 243, 39]
+[DEBUG] hdr.len=20, sizeof(packet)=20
+[CTRL] speed=60, angular=360
+[DEBUG] Got 3 frame(s), buf_remain=0 bytes
+[FRAME] Bad CRC @ 0: expected=0027, got=8C19
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[MOVE] Telemetry update: RPM=[244, 39, 244, 39]
+[DEBUG] hdr.len=20, sizeof(packet)=20
+[CTRL] speed=0, angular=0
+[MOVE] stop
+[FRAME] Bad CRC @ 0: expected=0027, got=0C0E
+[DEBUG] Got 2 frame(s), buf_remain=0 bytes
+[FRAME] Bad CRC @ 0: expected=0023, got=6165
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[FRAME] Bad CRC @ 0: expected=0023, got=EAE4
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[PKT 05] {'voltage': 0.51, 'rpm': [221, 35, 221, 35], 'acc_g': [0.35394287109375, -0.0699462890625, 1.30706787109375], 'acc_ms2': [3.470993856811523, -0.6859387756347656, 12.817957138061523], 'gyro_dps': [-0.19083969465648856, -0.0916030534351145, -9.900763358778626], 'mag_uT': [93.873, -59.926, -144.088], 'heading_deg': 0.62, 'stop_switch': 8, 'error_code': 108, 'version': 41}
+[FRAME] Bad CRC @ 0: expected=001F, got=B422
+[FRAME] Bad CRC @ 0: expected=001F, got=AE9F
+[FRAME] Bad CRC @ 0: expected=001F, got=4366
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[FRAME] Bad CRC @ 0: expected=001C, got=8315
+[FRAME] Bad CRC @ 0: expected=001C, got=BC7C
+[FRAME] Bad CRC @ 0: expected=001C, got=913C
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[FRAME] Bad CRC @ 0: expected=0018, got=414F
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[FRAME] Bad CRC @ 0: expected=0018, got=C5C7
+[FRAME] Bad CRC @ 0: expected=0018, got=18B1
+[FRAME] Bad CRC @ 0: expected=0018, got=443B
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[FRAME] Bad CRC @ 0: expected=0013, got=EB14
+[FRAME] Bad CRC @ 24: expected=0028, got=6BBF
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[FRAME] Bad CRC @ 0: expected=0013, got=5760
+[FRAME] Bad CRC @ 0: expected=0013, got=8198
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[FRAME] Bad CRC @ 0: expected=0010, got=78BE
+[FRAME] Bad CRC @ 0: expected=0010, got=D4DE
+[FRAME] Bad CRC @ 0: expected=0010, got=2762
+[FRAME] Bad CRC @ 0: expected=0010, got=337E
+[FRAME] Bad CRC @ 0: expected=0010, got=F87E
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[FRAME] Bad CRC @ 0: expected=000C, got=0CD9
+[FRAME] Bad CRC @ 0: expected=000C, got=6A6B
+[FRAME] Bad CRC @ 0: expected=000C, got=6952
+[FRAME] Bad CRC @ 0: expected=000C, got=4D48
+[FRAME] Bad CRC @ 0: expected=0008, got=5005
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[FRAME] Bad CRC @ 0: expected=0008, got=5889
+[FRAME] Bad CRC @ 0: expected=0008, got=DCE3
+[FRAME] Bad CRC @ 0: expected=0008, got=C04D
+[FRAME] Bad CRC @ 0: expected=0008, got=BAAF
+[FRAME] Bad CRC @ 0: expected=0004, got=1DFF
+[FRAME] Bad CRC @ 0: expected=0004, got=0521
+[FRAME] Bad CRC @ 0: expected=0004, got=7900
+[FRAME] Bad CRC @ 0: expected=0004, got=CB7C
+[FRAME] Bad CRC @ 0: expected=0004, got=C575
+[FRAME] Bad CRC @ 0: expected=0000, got=438A
+[FRAME] Bad CRC @ 0: expected=0000, got=FBC7
+[FRAME] Bad CRC @ 0: expected=0000, got=4A1E
+[FRAME] Bad CRC @ 0: expected=0000, got=B2B9
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[FRAME] Bad CRC @ 0: expected=28FF, got=FE08
+[DEBUG] Got 1 frame(s), buf_remain=32 bytes
+[PKT 01] {'ack': 0}
+[FRAME] Bad CRC @ 0: expected=0000, got=E121
+[FRAME] Bad CRC @ 0: expected=0000, got=6462
+[FRAME] Bad CRC @ 0: expected=0000, got=9144
+[FRAME] Bad CRC @ 0: expected=0000, got=FFF2
+[FRAME] Bad CRC @ 0: expected=0000, got=D98A
+[FRAME] Bad CRC @ 0: expected=0000, got=75E8
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[PKT 05] {'voltage': 0.53, 'rpm': [0, 0, 0, 0], 'acc_g': [-0.01300048828125, 0.0220947265625, 1.00140380859375], 'acc_ms2': [-0.1274912384033203, 0.2166752502441406, 9.820416659545899], 'gyro_dps': [0.061068702290076333, -0.007633587786259542, -0.030534351145038167], 'mag_uT': [85.49000000000001, -72.376, -150.39600000000002], 'heading_deg': 0.5, 'stop_switch': 2, 'error_code': 108, 'version': 41}
+[FRAME] Bad CRC @ 0: expected=0000, got=3A68
+[FRAME] Bad CRC @ 0: expected=0000, got=42F7
+[FRAME] Bad CRC @ 0: expected=0000, got=5B73
+[FRAME] Bad CRC @ 0: expected=0000, got=DD0D
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[FRAME] Bad CRC @ 0: expected=0000, got=297F
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[FRAME] Bad CRC @ 0: expected=0000, got=62AA
+[FRAME] Bad CRC @ 0: expected=0000, got=6A88
+[FRAME] Bad CRC @ 0: expected=0000, got=51A8
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[FRAME] Bad CRC @ 0: expected=0000, got=1704
+[FRAME] Bad CRC @ 0: expected=0000, got=ABA8
+[FRAME] Bad CRC @ 0: expected=0000, got=5119
+[FRAME] Bad CRC @ 0: expected=0000, got=ED94
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[FRAME] Bad CRC @ 0: expected=0000, got=A520
+[FRAME] Bad CRC @ 0: expected=0000, got=A303
+[FRAME] Bad CRC @ 0: expected=0000, got=0209
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[FRAME] Bad CRC @ 0: expected=0000, got=5452
+[FRAME] Bad CRC @ 0: expected=0000, got=48C8
+[FRAME] Bad CRC @ 0: expected=0000, got=D7AE
+[FRAME] Bad CRC @ 6: expected=0000, got=B28B
+[FRAME] Bad CRC @ 38: expected=0000, got=6862
+[FRAME] Bad CRC @ 0: expected=0000, got=4B45
+[FRAME] Bad CRC @ 6: expected=0000, got=42E3
+[FRAME] Bad CRC @ 38: expected=0000, got=183A
+[FRAME] Bad CRC @ 0: expected=FFFD, got=0944
+[FRAME] Bad CRC @ 6: expected=0000, got=BB63
+[FRAME] Bad CRC @ 38: expected=0000, got=5B85
+[FRAME] Bad CRC @ 70: expected=0000, got=886F
+[FRAME] Bad CRC @ 102: expected=0000, got=58F3
+[FRAME] Bad CRC @ 134: expected=0000, got=9C1C
+[FRAME] Bad CRC @ 166: expected=0000, got=FF8B
+[FRAME] Bad CRC @ 198: expected=0000, got=0255
+[FRAME] Bad CRC @ 0: expected=FF43, got=3001
+[FRAME] Bad CRC @ 6: expected=0000, got=2DAE
+[FRAME] Bad CRC @ 38: expected=0000, got=5AB5
+[FRAME] Bad CRC @ 70: expected=0000, got=0D0C
+[FRAME] Bad CRC @ 102: expected=0000, got=591B
+[FRAME] Bad CRC @ 0: expected=FC92, got=0B9D
+[FRAME] Bad CRC @ 6: expected=0000, got=8FA6
+[FRAME] Bad CRC @ 38: expected=0000, got=DE60
+[FRAME] Bad CRC @ 114: expected=0000, got=5026
+[DEBUG] Got 1 frame(s), buf_remain=878 bytes
+[PKT 05] {'voltage': 0.54, 'rpm': [0, 0, 0, 0], 'acc_g': [-0.00823974609375, 0.02392578125, 1.00103759765625], 'acc_ms2': [-0.08080430603027343, 0.2346317626953125, 9.816825357055663], 'gyro_dps': [0.061068702290076333, 0.0, -0.030534351145038167], 'mag_uT': [84.992, -72.791, -150.728], 'heading_deg': 0.5, 'stop_switch': 1, 'error_code': 108, 'version': 41}
+[FRAME] Bad CRC @ 0: expected=3728, got=E08B
+[FRAME] Bad CRC @ 6: expected=0000, got=DAF6
+[FRAME] Bad CRC @ 0: expected=0028, got=3548
+[FRAME] Bad CRC @ 6: expected=0000, got=F74F
+[FRAME] Bad CRC @ 82: expected=0000, got=C651
+[FRAME] Bad CRC @ 114: expected=0000, got=9C4D
+[FRAME] Bad CRC @ 190: expected=0000, got=652A
+[FRAME] Bad CRC @ 222: expected=0000, got=B629
+[DEBUG] Got 2 frame(s), buf_remain=790 bytes
+[FRAME] Bad CRC @ 0: expected=28FF, got=6997
+[FRAME] Bad CRC @ 50: expected=0000, got=FE0D
+[FRAME] Bad CRC @ 82: expected=0000, got=84DD
+[FRAME] Bad CRC @ 114: expected=0000, got=0211
+[FRAME] Bad CRC @ 146: expected=0000, got=5026
+[FRAME] Bad CRC @ 222: expected=0000, got=B5BA
+[FRAME] Bad CRC @ 254: expected=0000, got=B720
+[DEBUG] Got 2 frame(s), buf_remain=766 bytes
+[FRAME] Bad CRC @ 0: expected=FFFF, got=E58A
+[FRAME] Bad CRC @ 6: expected=0000, got=AD5C
+[FRAME] Bad CRC @ 38: expected=0000, got=2D61
+[FRAME] Bad CRC @ 0: expected=FF17, got=3565
+[FRAME] Bad CRC @ 50: expected=0000, got=D512
+[FRAME] Bad CRC @ 82: expected=0000, got=227D
+[FRAME] Bad CRC @ 158: expected=0000, got=8073
+[FRAME] Bad CRC @ 190: expected=0000, got=A4AB
+[FRAME] Bad CRC @ 222: expected=0000, got=8359
+[FRAME] Bad CRC @ 254: expected=0000, got=5318
+[FRAME] Bad CRC @ 286: expected=0000, got=2BAD
+[FRAME] Bad CRC @ 318: expected=0000, got=B744
+[DEBUG] Got 2 frame(s), buf_remain=690 bytes
+[FRAME] Bad CRC @ 0: expected=4605, got=ECDC
+[FRAME] Bad CRC @ 6: expected=0000, got=9FA8
+[FRAME] Bad CRC @ 38: expected=0000, got=7E58
+[FRAME] Bad CRC @ 70: expected=0000, got=F83E
+[FRAME] Bad CRC @ 102: expected=0000, got=B149
+[FRAME] Bad CRC @ 134: expected=0000, got=00E6
+[FRAME] Bad CRC @ 166: expected=0000, got=0489
+[FRAME] Bad CRC @ 198: expected=0000, got=E5F2
+[FRAME] Bad CRC @ 0: expected=50FF, got=E56C
+[FRAME] Bad CRC @ 6: expected=0000, got=8EED
+[FRAME] Bad CRC @ 0: expected=FF00, got=3AE5
+[FRAME] Bad CRC @ 6: expected=0000, got=E3A3
+[FRAME] Bad CRC @ 0: expected=5101, got=F9B1
+[FRAME] Bad CRC @ 6: expected=0000, got=D25B
+[FRAME] Bad CRC @ 0: expected=0007, got=A05D
+[FRAME] Bad CRC @ 6: expected=0000, got=8E42
+[FRAME] Bad CRC @ 38: expected=0000, got=315F
+[FRAME] Bad CRC @ 70: expected=0000, got=658B
+[FRAME] Bad CRC @ 102: expected=0000, got=F31D
+[FRAME] Bad CRC @ 0: expected=00FF, got=855A
+[FRAME] Bad CRC @ 6: expected=0000, got=EFC4
+[FRAME] Bad CRC @ 38: expected=0000, got=EB06
+[FRAME] Bad CRC @ 0: expected=F5FF, got=40E7
+[FRAME] Bad CRC @ 6: expected=0000, got=953E
+[FRAME] Bad CRC @ 38: expected=0000, got=BA01
+[FRAME] Bad CRC @ 0: expected=FC9B, got=A88A
+[FRAME] Bad CRC @ 6: expected=0000, got=A736
+[FRAME] Bad CRC @ 82: expected=0000, got=0287
+[FRAME] Bad CRC @ 114: expected=0000, got=AED8
+[FRAME] Bad CRC @ 190: expected=0000, got=16F5
+[FRAME] Bad CRC @ 222: expected=0000, got=1EB3
+[FRAME] Bad CRC @ 254: expected=0000, got=79AF
+[FRAME] Bad CRC @ 286: expected=0000, got=B597
+[FRAME] Bad CRC @ 318: expected=0000, got=A486
+[FRAME] Bad CRC @ 350: expected=0000, got=912D
+[FRAME] Bad CRC @ 382: expected=0000, got=B608
+[FRAME] Bad CRC @ 414: expected=0000, got=9728
+[FRAME] Bad CRC @ 446: expected=0000, got=D31D
+[FRAME] Bad CRC @ 478: expected=0000, got=D4C1
+[FRAME] Bad CRC @ 510: expected=0000, got=6A7D
+[FRAME] Bad CRC @ 542: expected=0000, got=8F3E
+[FRAME] Bad CRC @ 574: expected=0000, got=1859
+[FRAME] Bad CRC @ 650: expected=0000, got=3031
+[FRAME] Bad CRC @ 682: expected=0000, got=DF8A
+[FRAME] Bad CRC @ 714: expected=0000, got=FF5D
+[DEBUG] Got 3 frame(s), buf_remain=286 bytes
+[PKT 05] {'voltage': 0.55, 'rpm': [0, 0, 0, 0], 'acc_g': [-0.00823974609375, 0.0181884765625, 1.00384521484375], 'acc_ms2': [-0.08080430603027343, 0.17836802368164062, 9.84435867614746], 'gyro_dps': [0.04580152671755725, -0.015267175572519083, -0.015267175572519083], 'mag_uT': [85.241, -71.629, -150.811], 'heading_deg': 0.5, 'stop_switch': 1, 'error_code': 108, 'version': 41}
+[FRAME] Bad CRC @ 0: expected=FDFC, got=C6E8
+[FRAME] Bad CRC @ 6: expected=0000, got=6EE8
+[FRAME] Bad CRC @ 126: expected=0000, got=4231
+[FRAME] Bad CRC @ 158: expected=0000, got=B864
+[DEBUG] Got 2 frame(s), buf_remain=866 bytes
+[FRAME] Bad CRC @ 0: expected=FFFE, got=49A6
+[FRAME] Bad CRC @ 6: expected=0000, got=6FD9
+[FRAME] Bad CRC @ 38: expected=0000, got=CC16
+[FRAME] Bad CRC @ 114: expected=0000, got=0B22
+[DEBUG] Got 1 frame(s), buf_remain=886 bytes
+[FRAME] Bad CRC @ 0: expected=0000, got=736C
+[FRAME] Bad CRC @ 6: expected=0000, got=3E5D
+[FRAME] Bad CRC @ 82: expected=0000, got=513E
+[FRAME] Bad CRC @ 114: expected=0000, got=03E7
+[FRAME] Bad CRC @ 190: expected=0000, got=52C5
+[FRAME] Bad CRC @ 222: expected=0000, got=D849
+[FRAME] Bad CRC @ 298: expected=0000, got=4F66
+[FRAME] Bad CRC @ 330: expected=0000, got=937E
+[FRAME] Bad CRC @ 362: expected=0000, got=AF27
+[DEBUG] Got 3 frame(s), buf_remain=658 bytes
+[FRAME] Bad CRC @ 0: expected=0000, got=6498
+[FRAME] Bad CRC @ 6: expected=0000, got=248B
+[FRAME] Bad CRC @ 38: expected=0000, got=ED27
+[FRAME] Bad CRC @ 70: expected=0000, got=D4A9
+[FRAME] Bad CRC @ 102: expected=0000, got=9EE9
+[FRAME] Bad CRC @ 134: expected=0000, got=3784
+[FRAME] Bad CRC @ 166: expected=0000, got=D763
+[FRAME] Bad CRC @ 0: expected=0028, got=E3A4
+[FRAME] Bad CRC @ 50: expected=0000, got=7319
+[DEBUG] Got 1 frame(s), buf_remain=978 bytes
+[PKT 05] {'voltage': 0.55, 'rpm': [0, 0, 0, 0], 'acc_g': [-0.01458740234375, 0.0162353515625, 1.00531005859375], 'acc_ms2': [-0.14305354919433594, 0.1592144104003906, 9.858723886108399], 'gyro_dps': [0.05343511450381679, 0.0, -0.022900763358778626], 'mag_uT': [84.82600000000001, -72.625, -150.728], 'heading_deg': 0.5, 'stop_switch': 1, 'error_code': 108, 'version': 41}
+[FRAME] Bad CRC @ 0: expected=0000, got=266D
+[FRAME] Bad CRC @ 6: expected=0000, got=FE4E
+[FRAME] Bad CRC @ 38: expected=0000, got=8531
+[FRAME] Bad CRC @ 70: expected=0000, got=CA6F
+[FRAME] Bad CRC @ 0: expected=0000, got=1641
+[FRAME] Bad CRC @ 6: expected=0000, got=55AB
+[FRAME] Bad CRC @ 0: expected=0000, got=F3D5
+[FRAME] Bad CRC @ 6: expected=0000, got=2BD8
+[FRAME] Bad CRC @ 0: expected=0000, got=83B4
+[FRAME] Bad CRC @ 6: expected=0000, got=31DA
+[FRAME] Bad CRC @ 0: expected=3790, got=5057
+[FRAME] Bad CRC @ 6: expected=0000, got=6214
+[FRAME] Bad CRC @ 38: expected=0000, got=ECC7
+[FRAME] Bad CRC @ 0: expected=8D00, got=95A4
+[FRAME] Bad CRC @ 6: expected=0000, got=BB27
+[FRAME] Bad CRC @ 0: expected=3100, got=1BD7
+[FRAME] Bad CRC @ 6: expected=0000, got=19F4
+[FRAME] Bad CRC @ 38: expected=0000, got=9C47
+[FRAME] Bad CRC @ 70: expected=0000, got=7246
+[FRAME] Bad CRC @ 102: expected=0000, got=A143
+[FRAME] Bad CRC @ 134: expected=0000, got=A2BC
+[FRAME] Bad CRC @ 166: expected=0000, got=E3E7
+[FRAME] Bad CRC @ 198: expected=0000, got=97DD
+[FRAME] Bad CRC @ 230: expected=0000, got=3AAA
+[FRAME] Bad CRC @ 262: expected=0000, got=4924
+[FRAME] Bad CRC @ 294: expected=0000, got=5D0B
+[FRAME] Bad CRC @ 326: expected=0000, got=11DA
+[FRAME] Bad CRC @ 358: expected=0000, got=68FF
+[FRAME] Bad CRC @ 390: expected=0000, got=E9BE
+[FRAME] Bad CRC @ 422: expected=0000, got=34DA
+[FRAME] Bad CRC @ 454: expected=0000, got=C1E3
+[FRAME] Bad CRC @ 486: expected=0000, got=BCCB
+[FRAME] Bad CRC @ 518: expected=0000, got=1E13
+[FRAME] Bad CRC @ 550: expected=0000, got=45CE
+[FRAME] Bad CRC @ 582: expected=0000, got=65F2
+[FRAME] Bad CRC @ 658: expected=0000, got=FB17
+[FRAME] Bad CRC @ 690: expected=0000, got=11A4
+[FRAME] Bad CRC @ 722: expected=0000, got=84E3
+[FRAME] Bad CRC @ 754: expected=0000, got=4D99
+[FRAME] Bad CRC @ 786: expected=0000, got=2CFE
+[FRAME] Bad CRC @ 818: expected=0000, got=5F34
+[FRAME] Bad CRC @ 850: expected=0000, got=3BB7
+[FRAME] Bad CRC @ 882: expected=0000, got=C9B1
+[FRAME] Bad CRC @ 914: expected=0000, got=8E81
+[FRAME] Bad CRC @ 946: expected=0000, got=13BC
+[FRAME] Bad CRC @ 978: expected=0000, got=E26F
+[DEBUG] Got 1 frame(s), buf_remain=32 bytes
+[FRAME] Bad CRC @ 0: expected=0000, got=E5B5
+[FRAME] Bad CRC @ 0: expected=0000, got=B257
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[FRAME] Bad CRC @ 0: expected=0000, got=AB39
+[FRAME] Bad CRC @ 0: expected=0000, got=2B99
+[FRAME] Bad CRC @ 0: expected=0000, got=C84E
+[FRAME] Bad CRC @ 0: expected=0000, got=489B
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[FRAME] Bad CRC @ 0: expected=0000, got=9ED8
+[FRAME] Bad CRC @ 0: expected=0000, got=B483
+[FRAME] Bad CRC @ 0: expected=0000, got=E349
+[FRAME] Bad CRC @ 0: expected=0000, got=4500
+[FRAME] Bad CRC @ 0: expected=0000, got=27BE
+[FRAME] Bad CRC @ 0: expected=0000, got=42F4
+[FRAME] Bad CRC @ 0: expected=0000, got=21A4
+[FRAME] Bad CRC @ 0: expected=0000, got=53AD
+[FRAME] Bad CRC @ 0: expected=0000, got=B5CC
+[FRAME] Bad CRC @ 0: expected=0000, got=8B9B
+[FRAME] Bad CRC @ 0: expected=0000, got=A900
+{1761520906.1469643: {'motor_Fl': 244, 'motor_Fr': 39, 'motor_Br': 39, 'motor_Bl': 244, 'speed': 141.5, 'heading': 0.57, 'accel_x': 1.2240355987548828, 'accel_y': 0.00718260498046875, 'accel_z': 9.203909732055664, 'gyro_x': 1.015267175572519, 'gyro_y': -0.648854961832061, 'gyro_z': -23.114503816793892, 'mag_x': 70.63300000000001, 'mag_y': -65.819, 'mag_z': -146.91}, 1761520906.806947: {'motor_Fl': 98, 'motor_Fr': 16, 'motor_Br': 16, 'motor_Bl': 98, 'speed': 57.0, 'heading': 0.5, 'accel_x': -0.15502455749511718, 'accel_y': 0.22266075439453123, 'accel_z': 9.841964474487304, 'gyro_x': 0.09923664122137404, 'gyro_y': 0.007633587786259542, 'gyro_z': 0.0, 'mag_x': 86.23700000000001, 'mag_y': -71.629, 'mag_z': -151.143}, 1761520907.4656618: {'motor_Fl': 0, 'motor_Fr': 0, 'motor_Br': 0, 'motor_Bl': 0, 'speed': 0.0, 'heading': 0.5, 'accel_x': -0.04369418029785156, 'accel_y': 0.18315642700195311, 'accel_z': 9.8311905670166, 'gyro_x': 0.04580152671755725, 'gyro_y': 0.0, 'gyro_z': -0.022900763358778626, 'mag_x': 85.656, 'mag_y': -72.12700000000001, 'mag_z': -150.811}, 1761520908.6838255: {'motor_Fl': 0, 'motor_Fr': 0, 'motor_Br': 0, 'motor_Bl': 0, 'speed': 0.0, 'heading': 0.5, 'accel_x': -0.08080430603027343, 'accel_y': 0.2346317626953125, 'accel_z': 9.816825357055663, 'gyro_x': 0.061068702290076333, 'gyro_y': 0.0, 'gyro_z': -0.030534351145038167, 'mag_x': 84.992, 'mag_y': -72.791, 'mag_z': -150.728}, 1761520909.704021: {'motor_Fl': 0, 'motor_Fr': 0, 'motor_Br': 0, 'motor_Bl': 0, 'speed': 0.0, 'heading': 0.5, 'accel_x': -0.0796072052001953, 'accel_y': 0.15322890625, 'accel_z': 9.824007962036132, 'gyro_x': 0.04580152671755725, 'gyro_y': -0.007633587786259542, 'gyro_z': -0.030534351145038167, 'mag_x': 84.909, 'mag_y': -72.791, 'mag_z': -150.31300000000002}}
+
+[TEST] Starting IMU calibration...
+[IMU] Calibration start (mode=1)
+[FRAME] Bad CRC @ 0: expected=0000, got=329B
+[DEBUG] Got 3 frame(s), buf_remain=0 bytes
+[FRAME] Bad CRC @ 0: expected=0000, got=AAEC
+[FRAME] Bad CRC @ 0: expected=0000, got=93F0
+[FRAME] Bad CRC @ 0: expected=FFFF, got=3C52
+[FRAME] Bad CRC @ 50: expected=0000, got=C9F4
+[DEBUG] Got 1 frame(s), buf_remain=958 bytes
+[PKT 05] {'voltage': 0.55, 'rpm': [0, 0, 0, 0], 'acc_g': [-0.00396728515625, 0.02392578125, 0.99810791015625], 'acc_ms2': [-0.03890577697753906, 0.2346317626953125, 9.788094937133788], 'gyro_dps': [0.04580152671755725, 0.0, -0.015267175572519083], 'mag_uT': [84.66000000000001, -72.625, -151.309], 'heading_deg': 0.5, 'stop_switch': 1, 'error_code': 108, 'version': 41}
+[FRAME] Bad CRC @ 0: expected=5700, got=0D3F
+[FRAME] Bad CRC @ 6: expected=0000, got=32CE
+[FRAME] Bad CRC @ 38: expected=0000, got=A7CE
+[FRAME] Bad CRC @ 0: expected=AF00, got=2A7D
+[FRAME] Bad CRC @ 50: expected=0000, got=B1E8
+[FRAME] Bad CRC @ 82: expected=0000, got=1603
+[FRAME] Bad CRC @ 158: expected=0000, got=D41B
+[DEBUG] Got 2 frame(s), buf_remain=850 bytes
+[FRAME] Bad CRC @ 0: expected=0406, got=DB02
+[FRAME] Bad CRC @ 50: expected=0000, got=0494
+[FRAME] Bad CRC @ 126: expected=0000, got=9E09
+[DEBUG] Got 2 frame(s), buf_remain=870 bytes
+[FRAME] Bad CRC @ 0: expected=FB00, got=31CC
+[FRAME] Bad CRC @ 50: expected=0000, got=71A9
+[FRAME] Bad CRC @ 126: expected=0000, got=5E03
+[FRAME] Bad CRC @ 158: expected=0000, got=A469
+[FRAME] Bad CRC @ 234: expected=0000, got=4D36
+[FRAME] Bad CRC @ 266: expected=0000, got=4DF0
+[FRAME] Bad CRC @ 386: expected=0000, got=1E50
+[FRAME] Bad CRC @ 418: expected=0000, got=A3C9
+[FRAME] Bad CRC @ 450: expected=0000, got=CFCB
+[FRAME] Bad CRC @ 526: expected=0000, got=F5C4
+[FRAME] Bad CRC @ 602: expected=0000, got=8DE0
+[DEBUG] Got 7 frame(s), buf_remain=394 bytes
+[FRAME] Bad CRC @ 0: expected=0028, got=0A90
+[FRAME] Bad CRC @ 6: expected=0000, got=D7C1
+[FRAME] Bad CRC @ 38: expected=0000, got=086B
+[FRAME] Bad CRC @ 70: expected=0000, got=718C
+[FRAME] Bad CRC @ 0: expected=FFFC, got=B677
+[FRAME] Bad CRC @ 6: expected=0000, got=9453
+[FRAME] Bad CRC @ 82: expected=0000, got=D27A
+[FRAME] Bad CRC @ 114: expected=0000, got=C4A9
+[FRAME] Bad CRC @ 146: expected=0000, got=5CC1
+[FRAME] Bad CRC @ 266: expected=0000, got=0B1B
+[FRAME] Bad CRC @ 298: expected=0000, got=7B9E
+[FRAME] Bad CRC @ 383: expected=0000, got=FDF9
+[FRAME] Bad CRC @ 415: expected=0000, got=2892
+[FRAME] Bad CRC @ 447: expected=0000, got=06E5
+[FRAME] Bad CRC @ 523: expected=0000, got=B4D6
+[FRAME] Bad CRC @ 555: expected=0000, got=4140
+[DEBUG] Got 6 frame(s), buf_remain=450 bytes
+[PKT 01] {'ack': 0}
+[IMU] ACK: {'ack': 0}
+[FRAME] Bad CRC @ 0: expected=0402, got=6CAA
+[FRAME] Bad CRC @ 50: expected=0000, got=4B7F
+[FRAME] Bad CRC @ 82: expected=0000, got=0DF8
+[FRAME] Bad CRC @ 202: expected=0000, got=82DC
+[FRAME] Bad CRC @ 234: expected=0000, got=6201
+[FRAME] Bad CRC @ 310: expected=0000, got=1843
+[FRAME] Bad CRC @ 342: expected=0000, got=603B
+[FRAME] Bad CRC @ 462: expected=0000, got=B381
+[DEBUG] Got 6 frame(s), buf_remain=534 bytes
+[FRAME] Bad CRC @ 0: expected=0000, got=AB8B
+[FRAME] Bad CRC @ 50: expected=0000, got=7E99
+[FRAME] Bad CRC @ 82: expected=0000, got=6316
+[FRAME] Bad CRC @ 114: expected=0000, got=1090
+[FRAME] Bad CRC @ 190: expected=0000, got=DF54
+[FRAME] Bad CRC @ 222: expected=0000, got=F5AF
+[FRAME] Bad CRC @ 254: expected=0000, got=4C29
+[FRAME] Bad CRC @ 330: expected=0000, got=83A8
+[FRAME] Bad CRC @ 362: expected=0000, got=EFC9
+[FRAME] Bad CRC @ 394: expected=0000, got=C96C
+[FRAME] Bad CRC @ 470: expected=0000, got=E2DC
+[FRAME] Bad CRC @ 546: expected=0000, got=3B8A
+[FRAME] Bad CRC @ 578: expected=0000, got=E7F2
+[FRAME] Bad CRC @ 610: expected=0000, got=E5E2
+[FRAME] Bad CRC @ 686: expected=0000, got=86AB
+[FRAME] Bad CRC @ 718: expected=0000, got=D374
+[FRAME] Bad CRC @ 750: expected=0000, got=DAE3
+[FRAME] Bad CRC @ 782: expected=0000, got=3D77
+[FRAME] Bad CRC @ 814: expected=0000, got=445F
+[FRAME] Bad CRC @ 846: expected=0000, got=992B
+[DEBUG] Got 6 frame(s), buf_remain=166 bytes
+[PKT 05] {'voltage': 0.55, 'rpm': [0, 0, 0, 0], 'acc_g': [-0.00494384765625, 0.0189208984375, 1.00592041015625], 'acc_ms2': [-0.04848258361816406, 0.18555062866210936, 9.864709390258788], 'gyro_dps': [0.04580152671755725, -0.007633587786259542, -0.030534351145038167], 'mag_uT': [84.66000000000001, -73.289, -150.645], 'heading_deg': 0.49, 'stop_switch': 1, 'error_code': 108, 'version': 41}
+[FRAME] Bad CRC @ 0: expected=0037, got=8AF6
+[FRAME] Bad CRC @ 6: expected=0000, got=772B
+[FRAME] Bad CRC @ 38: expected=0000, got=CFFD
+[FRAME] Bad CRC @ 70: expected=0000, got=A68B
+[FRAME] Bad CRC @ 102: expected=0000, got=3E36
+[FRAME] Bad CRC @ 134: expected=0000, got=B547
+[FRAME] Bad CRC @ 166: expected=0000, got=6EB7
+[FRAME] Bad CRC @ 198: expected=0000, got=1953
+[FRAME] Bad CRC @ 0: expected=0500, got=B6D5
+[FRAME] Bad CRC @ 6: expected=0000, got=4D23
+[FRAME] Bad CRC @ 38: expected=0000, got=1A66
+[FRAME] Bad CRC @ 114: expected=0000, got=DDB8
+[FRAME] Bad CRC @ 146: expected=0000, got=2DB6
+[FRAME] Bad CRC @ 222: expected=0000, got=D6B3
+[FRAME] Bad CRC @ 254: expected=0000, got=54C7
+[DEBUG] Got 2 frame(s), buf_remain=770 bytes
+[FRAME] Bad CRC @ 0: expected=FFFD, got=C6BA
+[FRAME] Bad CRC @ 50: expected=0000, got=C7DE
+[FRAME] Bad CRC @ 82: expected=0000, got=EFBB
+[FRAME] Bad CRC @ 158: expected=0000, got=D5B7
+[FRAME] Bad CRC @ 190: expected=0000, got=BCB1
+[FRAME] Bad CRC @ 222: expected=0000, got=5E85
+[FRAME] Bad CRC @ 298: expected=0000, got=687A
+[FRAME] Bad CRC @ 374: expected=0000, got=FC96
+[FRAME] Bad CRC @ 406: expected=0000, got=1C16
+[DEBUG] Got 4 frame(s), buf_remain=626 bytes
+[FRAME] Bad CRC @ 0: expected=017C, got=11CB
+[FRAME] Bad CRC @ 50: expected=0000, got=434A
+[FRAME] Bad CRC @ 82: expected=0000, got=3793
+[FRAME] Bad CRC @ 114: expected=0000, got=858F
+[FRAME] Bad CRC @ 146: expected=0000, got=3E69
+[FRAME] Bad CRC @ 178: expected=0000, got=A357
+[FRAME] Bad CRC @ 210: expected=0000, got=EAEF
+[FRAME] Bad CRC @ 242: expected=0000, got=356C
+[FRAME] Bad CRC @ 274: expected=0000, got=C58E
+[FRAME] Bad CRC @ 306: expected=0000, got=DFD8
+[FRAME] Bad CRC @ 338: expected=0000, got=7788
+[FRAME] Bad CRC @ 370: expected=0000, got=8895
+[FRAME] Bad CRC @ 402: expected=0000, got=2F31
+[FRAME] Bad CRC @ 434: expected=0000, got=9A59
+[FRAME] Bad CRC @ 466: expected=0000, got=218E
+[FRAME] Bad CRC @ 498: expected=0000, got=F1F8
+[FRAME] Bad CRC @ 530: expected=0000, got=8E69
+[FRAME] Bad CRC @ 562: expected=0000, got=62EC
+[FRAME] Bad CRC @ 594: expected=0000, got=F33C
+[DEBUG] Got 1 frame(s), buf_remain=418 bytes
+[PKT 05] {'voltage': 0.55, 'rpm': [0, 0, 0, 0], 'acc_g': [-0.00396728515625, 0.0208740234375, 1.00750732421875], 'acc_ms2': [-0.03890577697753906, 0.20470424194335937, 9.880271701049804], 'gyro_dps': [0.03816793893129771, -0.007633587786259542, -0.022900763358778626], 'mag_uT': [84.82600000000001, -72.293, -149.649], 'heading_deg': 0.5, 'stop_switch': 1, 'error_code': 108, 'version': 41}
+[FRAME] Bad CRC @ 0: expected=20FF, got=78FA
+[FRAME] Bad CRC @ 50: expected=0000, got=FB98
+[FRAME] Bad CRC @ 126: expected=0000, got=F03A
+[FRAME] Bad CRC @ 158: expected=0000, got=E32E
+[FRAME] Bad CRC @ 190: expected=0000, got=C20E
+[FRAME] Bad CRC @ 222: expected=0000, got=D52E
+[FRAME] Bad CRC @ 618: expected=0000, got=52ED
+[DEBUG] Got 10 frame(s), buf_remain=394 bytes
+
+[TEST] Requesting IMU/MAG read...
+[IMU_READ] Requested IMU/MAG data
+[FRAME] Bad CRC @ 0: expected=6C01, got=AE7C
+[FRAME] Bad CRC @ 6: expected=0000, got=72D3
+[FRAME] Bad CRC @ 38: expected=0000, got=A70C
+[FRAME] Bad CRC @ 114: expected=0000, got=A450
+[FRAME] Bad CRC @ 146: expected=0000, got=C5E4
+[FRAME] Bad CRC @ 222: expected=0000, got=3264
+[FRAME] Bad CRC @ 254: expected=0000, got=D6C7
+[FRAME] Bad CRC @ 330: expected=0000, got=49EE
+[FRAME] Bad CRC @ 406: expected=0000, got=2975
+[FRAME] Bad CRC @ 438: expected=0000, got=D567
+[FRAME] Bad CRC @ 558: expected=0000, got=FE03
+[FRAME] Bad CRC @ 634: expected=0000, got=9C28
+[FRAME] Bad CRC @ 666: expected=0000, got=5339
+[FRAME] Bad CRC @ 742: expected=0000, got=7574
+[FRAME] Bad CRC @ 818: expected=0000, got=6908
+[FRAME] Bad CRC @ 850: expected=0000, got=6D8C
+[FRAME] Bad CRC @ 926: expected=0000, got=F449
+[FRAME] Bad CRC @ 958: expected=0000, got=AEF9
+[DEBUG] Got 11 frame(s), buf_remain=0 bytes
+[FRAME] Bad CRC @ 0: expected=0000, got=ED61
+[FRAME] Bad CRC @ 0: expected=0000, got=AF04
+[FRAME] Bad CRC @ 0: expected=0000, got=0993
+[FRAME] Bad CRC @ 0: expected=0000, got=2CFB
+[FRAME] Bad CRC @ 0: expected=0000, got=1433
+[FRAME] Bad CRC @ 0: expected=0000, got=9F78
+[FRAME] Bad CRC @ 0: expected=0000, got=04D2
+[FRAME] Bad CRC @ 0: expected=0000, got=6D47
+[FRAME] Bad CRC @ 0: expected=0000, got=41B1
+[FRAME] Bad CRC @ 0: expected=0000, got=CABD
+[FRAME] Bad CRC @ 0: expected=0000, got=F029
+[FRAME] Bad CRC @ 0: expected=0000, got=9619
+[FRAME] Bad CRC @ 0: expected=0000, got=A1FE
+[FRAME] Bad CRC @ 0: expected=0000, got=70AE
+[FRAME] Bad CRC @ 0: expected=0000, got=6EDA
+[FRAME] Bad CRC @ 0: expected=0000, got=B9F7
+[FRAME] Bad CRC @ 0: expected=0000, got=EDB7
+[FRAME] Bad CRC @ 0: expected=0000, got=1DA0
+[FRAME] Bad CRC @ 0: expected=0000, got=C729
+[FRAME] Bad CRC @ 0: expected=0000, got=0C10
+[FRAME] Bad CRC @ 0: expected=0000, got=A5A9
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[PKT 05] {'voltage': 0.55, 'rpm': [0, 0, 0, 0], 'acc_g': [1.04541015625, 0.004150390625, -1.9912109375], 'acc_ms2': [10.251971508789062, 0.040701428222656245, -19.527108740234375], 'gyro_dps': [-0.16793893129770993, 0.030534351145038167, -0.15267175572519084], 'mag_uT': [115.86800000000001, -1184.9080000000001, -148.57000000000002], 'heading_deg': 0.08, 'stop_switch': 1, 'error_code': 108, 'version': 41}
+[FRAME] Bad CRC @ 0: expected=0000, got=7774
+[FRAME] Bad CRC @ 0: expected=0000, got=4DF6
+[FRAME] Bad CRC @ 0: expected=0000, got=BED6
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[FRAME] Bad CRC @ 0: expected=0000, got=296E
+[FRAME] Bad CRC @ 0: expected=0000, got=BBD2
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[FRAME] Bad CRC @ 0: expected=0000, got=9A36
+[FRAME] Bad CRC @ 0: expected=0000, got=2C94
+[FRAME] Bad CRC @ 0: expected=0000, got=8662
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[FRAME] Bad CRC @ 0: expected=0000, got=DFD0
+[FRAME] Bad CRC @ 0: expected=0000, got=6FC2
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[FRAME] Bad CRC @ 0: expected=0000, got=591F
+[FRAME] Bad CRC @ 0: expected=0000, got=5BA0
+[FRAME] Bad CRC @ 0: expected=0000, got=90B3
+[FRAME] Bad CRC @ 0: expected=0000, got=CEF8
+[FRAME] Bad CRC @ 0: expected=0000, got=A1DF
+[FRAME] Bad CRC @ 0: expected=0000, got=237A
+[FRAME] Bad CRC @ 0: expected=0000, got=F58B
+[FRAME] Bad CRC @ 0: expected=0000, got=2B65
+[FRAME] Bad CRC @ 0: expected=0000, got=7976
+[FRAME] Bad CRC @ 0: expected=0000, got=EB42
+[FRAME] Bad CRC @ 0: expected=0000, got=C624
+[FRAME] Bad CRC @ 0: expected=0000, got=E909
+[FRAME] Bad CRC @ 0: expected=0000, got=1E68
+[FRAME] Bad CRC @ 0: expected=0000, got=6DF7
+[FRAME] Bad CRC @ 0: expected=0000, got=D043
+[FRAME] Bad CRC @ 0: expected=0000, got=DAE3
+[FRAME] Bad CRC @ 0: expected=0000, got=837E
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[FRAME] Bad CRC @ 0: expected=0000, got=44FA
+[FRAME] Bad CRC @ 0: expected=0000, got=1596
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[FRAME] Bad CRC @ 0: expected=0000, got=599B
+[FRAME] Bad CRC @ 0: expected=0000, got=1876
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[FRAME] Bad CRC @ 0: expected=0000, got=17F2
+[FRAME] Bad CRC @ 0: expected=0000, got=CC62
+[FRAME] Bad CRC @ 0: expected=0000, got=BE5D
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[FRAME] Bad CRC @ 0: expected=0000, got=3033
+[FRAME] Bad CRC @ 0: expected=0000, got=82D2
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[FRAME] Bad CRC @ 0: expected=0000, got=82D0
+[FRAME] Bad CRC @ 0: expected=0000, got=6397
+[FRAME] Bad CRC @ 0: expected=0000, got=4A6E
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[PKT 05] {'voltage': 0.55, 'rpm': [0, 0, 0, 0], 'acc_g': [1.0455322265625, 0.006103515625, -1.9942626953125], 'acc_ms2': [10.25316860961914, 0.05985504150390625, -19.557036260986326], 'gyro_dps': [-0.17557251908396945, 0.022900763358778626, -0.15267175572519084], 'mag_uT': [117.694, -1187.066, -149.898], 'heading_deg': 0.08, 'stop_switch': 1, 'error_code': 108, 'version': 41}
+[FRAME] Bad CRC @ 0: expected=0000, got=C536
+[FRAME] Bad CRC @ 0: expected=0000, got=3DBC
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[FRAME] Bad CRC @ 0: expected=0000, got=064F
+[FRAME] Bad CRC @ 0: expected=0000, got=D206
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[FRAME] Bad CRC @ 0: expected=0000, got=D8AD
+[IMU_READ] Timeout waiting for IMU/MAG data
+[RESULT] IMU/MAG Data: None
+[FRAME] Bad CRC @ 0: expected=0000, got=A1AC
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[FRAME] Bad CRC @ 0: expected=0000, got=AAF7
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[FRAME] Bad CRC @ 0: expected=0000, got=936C
+[FRAME] Bad CRC @ 0: expected=0000, got=03E1
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[FRAME] Bad CRC @ 0: expected=0000, got=EF4C
+[FRAME] Bad CRC @ 0: expected=0000, got=2735
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[FRAME] Bad CRC @ 0: expected=0000, got=920F
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[FRAME] Bad CRC @ 0: expected=0000, got=7511
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[FRAME] Bad CRC @ 0: expected=0000, got=690A
+[FRAME] Bad CRC @ 0: expected=0000, got=166F
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[FRAME] Bad CRC @ 0: expected=0000, got=E424
+[FRAME] Bad CRC @ 0: expected=0000, got=5960
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[FRAME] Bad CRC @ 0: expected=0000, got=C0D0
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[FRAME] Bad CRC @ 0: expected=0000, got=F89D
+[FRAME] Bad CRC @ 0: expected=0000, got=ABF1
+[FRAME] Bad CRC @ 0: expected=0000, got=14F8
+[FRAME] Bad CRC @ 0: expected=0000, got=97C3
+[FRAME] Bad CRC @ 0: expected=0000, got=09DF
+[FRAME] Bad CRC @ 0: expected=0000, got=8B15
+[FRAME] Bad CRC @ 0: expected=0000, got=B19F
+[FRAME] Bad CRC @ 0: expected=0000, got=3350
+[FRAME] Bad CRC @ 0: expected=0000, got=7880
+[FRAME] Bad CRC @ 0: expected=0000, got=6C8C
+[FRAME] Bad CRC @ 0: expected=0000, got=5545
+[FRAME] Bad CRC @ 0: expected=0000, got=FA33
+[FRAME] Bad CRC @ 0: expected=28FF, got=3BC6
+[DEBUG] Got 1 frame(s), buf_remain=32 bytes
+[PKT 01] {'ack': 0}
+[FRAME] Bad CRC @ 0: expected=0000, got=ABBC
+[FRAME] Bad CRC @ 0: expected=0000, got=A177
+[FRAME] Bad CRC @ 0: expected=0000, got=FD10
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[FRAME] Bad CRC @ 0: expected=0000, got=4A53
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[FRAME] Bad CRC @ 0: expected=0000, got=D00B
+[FRAME] Bad CRC @ 0: expected=0000, got=F82F
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[PKT 05] {'voltage': 0.55, 'rpm': [0, 0, 0, 0], 'acc_g': [1.0458984375, 0.00439453125, -1.9998779296875], 'acc_ms2': [10.256759912109374, 0.0430956298828125, -19.61210289916992], 'gyro_dps': [-0.16030534351145037, 0.03816793893129771, -0.15267175572519084], 'mag_uT': [116.44900000000001, -1185.904, -149.234], 'heading_deg': 0.08, 'stop_switch': 1, 'error_code': 108, 'version': 41}
+[FRAME] Bad CRC @ 0: expected=0000, got=B98C
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[FRAME] Bad CRC @ 0: expected=0000, got=C9E6
+[FRAME] Bad CRC @ 0: expected=0000, got=4802
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[FRAME] Bad CRC @ 0: expected=0000, got=088E
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+
+[TEST] Writing IMU bias values...
+[IMU_WRITE] Sent IMU bias values
+[FRAME] Bad CRC @ 0: expected=0000, got=0AA7
+[FRAME] Bad CRC @ 32: expected=0000, got=0CE5
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[FRAME] Bad CRC @ 0: expected=0000, got=0849
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[FRAME] Bad CRC @ 0: expected=0000, got=2258
+[FRAME] Bad CRC @ 0: expected=0000, got=62D2
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[FRAME] Bad CRC @ 0: expected=0000, got=1DDF
+[FRAME] Bad CRC @ 0: expected=0000, got=06A8
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[FRAME] Bad CRC @ 0: expected=0000, got=90B3
+[FRAME] Bad CRC @ 0: expected=0000, got=4FF4
+[FRAME] Bad CRC @ 0: expected=0000, got=2048
+[FRAME] Bad CRC @ 0: expected=0000, got=FE00
+[FRAME] Bad CRC @ 0: expected=0000, got=7148
+[FRAME] Bad CRC @ 0: expected=0000, got=88A1
+[FRAME] Bad CRC @ 0: expected=0000, got=B5B6
+[FRAME] Bad CRC @ 0: expected=0000, got=0788
+[FRAME] Bad CRC @ 0: expected=0000, got=321A
+[FRAME] Bad CRC @ 0: expected=0000, got=C888
+[FRAME] Bad CRC @ 0: expected=0000, got=4CB6
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[FRAME] Bad CRC @ 0: expected=0000, got=9C41
+[FRAME] Bad CRC @ 0: expected=0000, got=A9EB
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[FRAME] Bad CRC @ 0: expected=0000, got=FBC4
+[FRAME] Bad CRC @ 0: expected=0000, got=EA98
+[FRAME] Bad CRC @ 0: expected=0000, got=9D8D
+[FRAME] Bad CRC @ 0: expected=0000, got=4B46
+[FRAME] Bad CRC @ 0: expected=0000, got=030B
+[FRAME] Bad CRC @ 0: expected=0000, got=E114
+[FRAME] Bad CRC @ 0: expected=0000, got=F0D5
+[FRAME] Bad CRC @ 0: expected=0000, got=398A
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[FRAME] Bad CRC @ 0: expected=0000, got=8862
+[FRAME] Bad CRC @ 0: expected=0000, got=4A83
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[PKT 05] {'voltage': 0.55, 'rpm': [0, 0, 0, 0], 'acc_g': [1.0418701171875, 0.005615234375, 1.999267578125], 'acc_ms2': [10.217255584716796, 0.055066638183593745, 19.60611739501953], 'gyro_dps': [-0.16793893129770993, 0.022900763358778626, -0.16030534351145037], 'mag_uT': [115.86800000000001, -1186.9830000000002, -147.574], 'heading_deg': 0.08, 'stop_switch': 1, 'error_code': 108, 'version': 41}
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[FRAME] Bad CRC @ 0: expected=0000, got=15FC
+[FRAME] Bad CRC @ 0: expected=0000, got=4FB3
+[FRAME] Bad CRC @ 0: expected=0000, got=9176
+[FRAME] Bad CRC @ 0: expected=0000, got=3746
+
+[TEST] Writing MAG bias values...
+[MAG_WRITE] Sent MAG bias values
+[FRAME] Bad CRC @ 0: expected=0000, got=B8BA
+[FRAME] Bad CRC @ 0: expected=0000, got=0C9B
+[DEBUG] Got 1 frame(s), buf_remain=32 bytes
+[FRAME] Bad CRC @ 0: expected=0000, got=73C9
+[FRAME] Bad CRC @ 0: expected=0000, got=2744
+[FRAME] Bad CRC @ 0: expected=0000, got=3EBE
+[FRAME] Bad CRC @ 0: expected=0000, got=D38F
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[FRAME] Bad CRC @ 0: expected=0000, got=2865
+[FRAME] Bad CRC @ 0: expected=0000, got=9F2B
+[FRAME] Bad CRC @ 0: expected=0000, got=8708
+[FRAME] Bad CRC @ 0: expected=0000, got=14B9
+[FRAME] Bad CRC @ 0: expected=0000, got=FC48
+[FRAME] Bad CRC @ 0: expected=0000, got=6910
+[FRAME] Bad CRC @ 0: expected=0000, got=2F0E
+[FRAME] Bad CRC @ 0: expected=0000, got=FDC7
+[FRAME] Bad CRC @ 0: expected=0000, got=C227
+[FRAME] Bad CRC @ 0: expected=0000, got=2E62
+[FRAME] Bad CRC @ 0: expected=0000, got=A46F
+[FRAME] Bad CRC @ 0: expected=0000, got=DA7A
+[FRAME] Bad CRC @ 0: expected=0000, got=53D8
+[FRAME] Bad CRC @ 0: expected=0000, got=90B0
+[FRAME] Bad CRC @ 0: expected=0000, got=4CC8
+[FRAME] Bad CRC @ 0: expected=0000, got=1F73
+[FRAME] Bad CRC @ 0: expected=0000, got=CE14
+[FRAME] Bad CRC @ 0: expected=0000, got=F45B
+[FRAME] Bad CRC @ 0: expected=0000, got=8AC9
+[FRAME] Bad CRC @ 0: expected=0000, got=AC0F
+[FRAME] Bad CRC @ 0: expected=0000, got=27C2
+[FRAME] Bad CRC @ 0: expected=0000, got=3F26
+[FRAME] Bad CRC @ 0: expected=0000, got=852F
+[FRAME] Bad CRC @ 0: expected=0000, got=7D8C
+[FRAME] Bad CRC @ 0: expected=0000, got=D018
+[FRAME] Bad CRC @ 0: expected=0000, got=5E9D
+[FRAME] Bad CRC @ 0: expected=0000, got=F0D8
+[FRAME] Bad CRC @ 0: expected=0000, got=F724
+[FRAME] Bad CRC @ 0: expected=0000, got=FCFB
+[FRAME] Bad CRC @ 0: expected=0000, got=A774
+[FRAME] Bad CRC @ 0: expected=0000, got=5BAA
+[FRAME] Bad CRC @ 0: expected=0000, got=B18F
+[FRAME] Bad CRC @ 0: expected=0000, got=9F0C
+[FRAME] Bad CRC @ 0: expected=0000, got=6A94
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[FRAME] Bad CRC @ 0: expected=0000, got=EBFC
+[FRAME] Bad CRC @ 0: expected=0000, got=BD9B
+[FRAME] Bad CRC @ 0: expected=0000, got=CCC1
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+[PKT 05] {'voltage': 0.55, 'rpm': [0, 0, 0, 0], 'acc_g': [1.042724609375, 0.00244140625, -1.99609375], 'acc_ms2': [10.225635290527343, 0.023942016601562498, -19.574992773437497], 'gyro_dps': [-0.16793893129770993, 0.030534351145038167, -0.16793893129770993], 'mag_uT': [116.366, -1186.153, -148.65300000000002], 'heading_deg': 0.08, 'stop_switch': 1, 'error_code': 108, 'version': 41}
+[FRAME] Bad CRC @ 0: expected=0000, got=58E6
+[FRAME] Bad CRC @ 0: expected=0000, got=515F
+[DEBUG] Got 1 frame(s), buf_remain=0 bytes
+
+[TEST] Requesting OTA update to version 42...
+[OTA] Requested update to version 42
+
+[TEST] All commands sent. Disconnecting...
+[READER] Rover closed connection
+[READER] Exiting...
+[API] Disconnected from rover

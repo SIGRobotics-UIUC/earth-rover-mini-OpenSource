@@ -150,7 +150,7 @@ void set_sys_rgb_led_color_flash (rt_uint16_t on_time, system_state_t sys_status
     }
 
     /* Charging state handling: slow blink */
-    if(sys_status == SYSTEM_STATE_CHARGING) // 判断到充电状态电源指示灯进行慢闪 
+    if(sys_status == SYSTEM_STATE_CHARGING) // 判断到充电状态电源指示灯进行慢闪 = When charging is detected, make the power indicator LED blink slowly.
     {
         if(charge_flag)
         {
@@ -890,13 +890,13 @@ void state_thread_entry ( void *parameter )
 
     // Initialize sliding filters for smoothing sensor data
     SlidingFilter v_filter , c_filter , p_filter , motor_l_filter,motor_r_filter,rpm_l_filter,rpm_r_filter;
-    sliding_filter_init ( &v_filter , V_FILTER_SIZE );        
-    sliding_filter_init ( &c_filter , C_FILTER_SIZE );        
-    sliding_filter_init ( &p_filter , P_FILTER_SIZE );        
-    sliding_filter_init ( &rpm_l_filter , C_FILTER_SIZE );    
-    sliding_filter_init ( &rpm_r_filter , C_FILTER_SIZE );    
-    sliding_filter_init ( &motor_l_filter , C_FILTER_SIZE );  
-    sliding_filter_init ( &motor_r_filter , C_FILTER_SIZE );  
+    sliding_filter_init ( &v_filter , V_FILTER_SIZE );        // 初始化滑动滤波器 = Initialize sliding filter
+    sliding_filter_init ( &c_filter , C_FILTER_SIZE );        // 初始化滑动滤波器 = Initialize sliding filter
+    sliding_filter_init ( &p_filter , P_FILTER_SIZE );        // 初始化滑动滤波器 = Initialize sliding filter
+    sliding_filter_init ( &rpm_l_filter , C_FILTER_SIZE );    // 初始化滑动滤波器 = Initialize sliding filter
+    sliding_filter_init ( &rpm_r_filter , C_FILTER_SIZE );    // 初始化滑动滤波器 = Initialize sliding filter
+    sliding_filter_init ( &motor_l_filter , C_FILTER_SIZE );  // 初始化滑动滤波器 = Initialize sliding filter
+    sliding_filter_init ( &motor_r_filter , C_FILTER_SIZE );  // 初始化滑动滤波器 = Initialize sliding filter
 
     // Create timer for detecting long key presses
     key_timer = rt_timer_create ( "key_timer" , key_timer_timeout , RT_NULL , KEY_LONG_PRESS_TIME ,
