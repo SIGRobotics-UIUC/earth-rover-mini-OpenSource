@@ -125,5 +125,5 @@ The Earth Rover Mini comes with a 4G module and we provide a network stack that 
 
 ## How to use SDK:
 1. [Activate your robot](https://discord.com/invite/N7vEWB6Jdu)
-2. Contact us to obtain a token
+2. Go to the [support-ticket](https://discord.com/channels/1205162105205166151/1215167614649765960) channel to request a token by creating a ticket
 3. Start using the SDK
