@@ -1,6 +1,6 @@
 import socket, struct, asyncio, time, contextlib, copy
 from typing import Any
-from .uart_cp import (
+from uart_cp import (
     UCP_KEEP_ALIVE,
     UCP_MOTOR_CTL,
     UCP_IMU_CORRECTION_START,
@@ -12,7 +12,7 @@ from .uart_cp import (
     UCP_OTA,
     UCP_STATE,
 )
-from .uart_cp import (
+from uart_cp import (
     UcpErr,
     UcpImuCorrectionType,
     UcpHd,
@@ -238,6 +238,7 @@ class EarthRoverMini:
             0x0A: self.decode_state,
         }
         self.last_rpm_log_time = 0.0
+        self.moving = False
 
     # Connection Handling
     async def connect(self):
@@ -633,6 +634,41 @@ class EarthRoverMini:
         await self.ctrl_packet(0, 0)
         print("[MOVE] stop")
 
+    async def move_continuous(self, speed, angular):
+        if self.moving:
+            print("[MOVE_CONTINUOUS] Already running")
+            return
+
+        self.moving = True
+        print(f"[MOVE_CONTINUOUS] speed={speed}, angular={angular}")
+
+        try:
+            while self.moving:
+                await self.ctrl_packet(speed, angular)
+                await asyncio.sleep(0.1)
+
+                try:
+                    await asyncio.wait_for(self.telemetry_event.wait(), timeout=0.5)
+                    data = self.last_telemetry
+                    print(f"[MOVE_CONTINUOUS] Telemetry update: RPM={data['rpm']}")
+                    self.telemetry_event.clear()
+                except asyncio.TimeoutError:
+                    print("[MOVE_CONTINUOUS] No telemetry update")
+
+        except asyncio.CancelledError:
+            print("[MOVE_CONTINUOUS] Cancelled")
+        finally:
+            await self.stop()
+            print("[MOVE_CONTINUOUS] Exiting cleanly")
+
+    async def stop(self):
+        if not self.moving:
+            print("[STOP] Rover already stopped")
+            return
+        self.moving = False
+        await self.ctrl_packet(0, 0)
+        print("[STOP] Rover stopped")
+
     async def imu_calibrate(self, mode=1):
         imu_pkt = UcpImuCorrect()
         self.make_header(imu_pkt, UCP_IMU_CORRECTION_START)
@@ -712,32 +748,36 @@ async def main():
     await rover.safe_ping()
     await asyncio.sleep(1)
 
-    # # --- 2️⃣ Move / Control Packet Test ---
-    print("\n[TEST] Moving rover (speed=60, angular=360) for 3s...")
+   # --- 2️⃣ Continuous Move Test with Live Telemetry ---
+    print("\n[TEST] Starting continuous motion (speed=60, angular=360)...")
 
-    # Start the movement task (async)
-    move_task = asyncio.create_task(rover.move(3, 60, 360))
+    # Start motion in the background
+    move_task = asyncio.create_task(rover.move_continuous(60, 360))
 
-    # Take 5 telemetry samples spaced evenly across the movement duration
-    x = 5
-    vals = {}
-    for i in range(x):
-        telemetry = await rover.get_telemetry()  # snapshot (non-blocking)
-        vals[time.time()] = telemetry
+    # Collect telemetry while the rover is moving
+    try:
+        start_time = time.time()
+        duration = 5  # seconds
+        while time.time() - start_time < duration:
+            telemetry = await rover.get_telemetry()
+            if telemetry:
+                print(
+                    f"[TELEMETRY] Speed={telemetry['speed']:.1f} RPM, "
+                    f"Heading={telemetry['heading']:.1f}°, "
+                    f"Accel=({telemetry['accel_x']:.2f}, {telemetry['accel_y']:.2f}, {telemetry['accel_z']:.2f})"
+                )
+            else:
+                print("[TELEMETRY] No data received")
+            await asyncio.sleep(0.5)
 
-        if telemetry:
-            print(f"[TELEMETRY {i+1}/5] RPM={telemetry.get('speed'):.1f}, Heading={telemetry.get('heading'):.1f}")
-        else:
-            print(f"[TELEMETRY {i+1}/5] No data received")
+    except KeyboardInterrupt:
+        print("\n[TEST] Interrupted by user — stopping rover safely...")
 
-        await asyncio.sleep(3 / x)  # space samples across ~3 seconds
+    # Stop motion cleanly
+    await rover.stop()
 
-    # Wait for the move() to finish cleanly
+    # Wait for the continuous motion loop to end
     await move_task
-
-    await asyncio.sleep(1)
-
-    print(vals)
 
     # # --- 3️⃣ IMU Calibration ---
     print("\n[TEST] Starting IMU calibration...")
