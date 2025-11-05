@@ -119,11 +119,37 @@ This will open a window displaying the real-time video stream from the Earth Rov
 
 
 # Remote Teleoperation
-The Earth Rover Mini comes with a 4G module and we provide a network stack that allows you to drive your Earth Rover from anywhere, including:
-- A ready-to-use web interface 👉 [link](https://my.frodobots.com)
-- An SDK for developers 👉 [link](https://github.com/frodobots-org/earth-rovers-sdk)
+The Earth Rover Mini comes with a 4G module and we provide a network stack that allows you to drive your Earth Rover from anywhere.
 
-## How to use SDK:
+## Connecting via FrodoBots Website
 1. [Activate your robot](https://discord.com/invite/N7vEWB6Jdu)
-2. Go to the [support-ticket](https://discord.com/channels/1205162105205166151/1215167614649765960) channel to request a token by creating a ticket
-3. Start using the SDK
+2. Click <b>[+ Activate an Earth Rover]</b> on the [my.frodobots](https://my.frodobots.com/) to link your Earth Rover.
+3. Start driving your Earth Rover.
+
+## Connecting via Earth Rover SDK
+1. Follow the instructions in <b>Connecting via FrodoBots Website</b> to activate and link your Earth Rover.
+2. Go to <b>Settings</b> on [my.frodobots](https://my.frodobots.com/), find your <b>SDK Access Token</b>, and copy it.
+3. Install the SDK:
+```bash
+git clone https://github.com/frodobots-org/earth-rovers-sdk.git
+cd earth-rovers-sdk
+pip3 install -r requirements.txt
+```
+4. Create a <b>.env</b> file in the earth-rovers-sdk directory and update it with your token.
+```
+SDK_API_TOKEN="<Your SDK Access Token>"
+#  example: zero-inlay-cal
+BOT_SLUG="<Your Bot name>"
+```
+5. Run the SDK
+```bash
+hypercorn main:app --reload
+```
+6. Now you can check the live streaming of the bot in the following URL: [http://localhost:8000](http://localhost:8000/)
+
+
+### More API Information
+Visit the SDK [repository](https://github.com/frodobots-org/earth-rovers-sdk) for more API information.
+
+### Need Support?
+Visit the [FrodoBots Discord](https://discord.gg/3pJmcDRh) for help.
