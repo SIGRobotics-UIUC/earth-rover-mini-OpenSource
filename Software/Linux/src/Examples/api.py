@@ -1,4 +1,4 @@
-import socket, struct, asyncio, time, contextlib, copy
+import socket, struct, asyncio, time, contextlib, copy, threading
 from typing import Any
 from uart_cp import (
     UCP_KEEP_ALIVE,
@@ -744,7 +744,7 @@ class EarthRoverMiniBlocking:
             0x05: self.decode_rpm_report,
             0x08: self.decode_imu_read_ack,
             0x09: self.decode_ota_ack,
-            0x0A: self.decode_stat
+            0x0A: self.decode_state
         }
     
     # --- Connection ---
@@ -1251,7 +1251,7 @@ if __name__ == "__main__":
     rover.safe_ping()
 
     print("\n[TEST] Move test (3s at speed=60, angular=360):")
-    rover.move(3, 60, 360)
+    rover.move(10, 60, 0)
 
     print("\n[TEST] IMU read:")
     imu_data = rover.imu_mag_read()
