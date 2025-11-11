@@ -1017,7 +1017,7 @@ class EarthRoverMiniBlocking:
         print("[PING] Failed after retries")
         return False
 
-    def ctrl_packet(self, speed, angular):
+    def ctrl_packet(self, speed, angular): #sends the command packet to the rover
         ctrl_pkt = UcpCtlCmd()
         self.make_header(ctrl_pkt, UCP_MOTOR_CTL)
         ctrl_pkt.speed = speed
@@ -1062,7 +1062,7 @@ class EarthRoverMiniBlocking:
             self.ctrl_packet(0, 0)
             print("[MOVE_CONTINUOUS] Exiting cleanly")
 
-    def move_continuous(self, speed, angular):
+    def move_continuous(self, speed, angular): #debug look at how calling a second move_continuous is handled by the thread already running 
         """Non-blocking starter; returns immediately and keeps moving until stop()."""
         if getattr(self, "_move_thread", None) and self.move_thread.is_alive():
             print("[MOVE_CONTINUOUS] Already running")
