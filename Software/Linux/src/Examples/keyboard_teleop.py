@@ -7,7 +7,7 @@ import tty
 
 from api import EarthRoverMiniBlocking
 
-UPDATE_RATE = 0.03  
+UPDATE_RATE = 0.03 #every num of seconds send command  
 
 class KeyboardTeleop:
     def __init__(self, rover_ip="192.168.11.1", rover_port=8888):
