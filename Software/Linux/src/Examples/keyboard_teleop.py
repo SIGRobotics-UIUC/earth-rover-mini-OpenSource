@@ -7,13 +7,12 @@ import tty
 
 from api import EarthRoverMiniBlocking
 
-UPDATE_RATE = 0.05 #every num of seconds send command  
+UPDATE_RATE = 0.03 #every num of seconds send command  
 
 class KeyboardTeleop:
     def __init__(self, rover_ip="192.168.11.1", rover_port=8888):
         self.rover_ip = rover_ip
         self.rover_port = rover_port
-
      
         self.rover = EarthRoverMiniBlocking(self.rover_ip, self.rover_port)
 
@@ -21,7 +20,6 @@ class KeyboardTeleop:
         self.turn = 0
         self.running = True
 
-   
     def getch(self):
         fd = sys.stdin.fileno()
         old_attr = termios.tcgetattr(fd)
