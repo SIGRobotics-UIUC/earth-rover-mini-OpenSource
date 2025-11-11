@@ -1251,15 +1251,7 @@ if __name__ == "__main__":
     rover.safe_ping()
 
     print("\n[TEST] Move test (3s at speed=60, angular=360):")
-    rover.move(10, 60, 0)
-
-    print("\n[TEST] IMU read:")
-    imu_data = rover.imu_mag_read()
-    print("IMU/MAG Data:", imu_data)
-
-    print("\n[TEST] Telemetry read:")
-    telemetry = rover.get_telemetry(timeout=1.0)
-    print("Telemetry:", telemetry)
+    rover.move(1, 60, 0)
 
     rover.disconnect()
 
