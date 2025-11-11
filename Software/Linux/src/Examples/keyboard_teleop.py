@@ -7,16 +7,21 @@ import tty
 
 from api import EarthRoverMiniBlocking
 
-UPDATE_RATE = 0.05  # 50ms = 20Hz
+UPDATE_RATE = 0.03  
 
 class KeyboardTeleop:
-    def __init__(self, rover_ip="192.168.11.1", port=8888):
-        self.rover = EarthRoverMiniBlocking(rover_ip    , port)
-        self.speed = 0      # integer for speed
-        self.turn = 0       # integer for turning
+    def __init__(self, rover_ip="192.168.11.1", rover_port=8888):
+        self.rover_ip = rover_ip
+        self.rover_port = rover_port
+
+     
+        self.rover = EarthRoverMiniBlocking(self.rover_ip, self.rover_port)
+
+        self.speed = 0
+        self.turn = 0
         self.running = True
 
-    # ---------- Terminal Key Helpers ----------
+   
     def getch(self):
         fd = sys.stdin.fileno()
         old_attr = termios.tcgetattr(fd)
@@ -32,6 +37,7 @@ class KeyboardTeleop:
         print("    W: forward   S: backward")
         print("    A: turn left D: turn right")
         print("    SPACE: stop  Q: quit\n")
+        print(f"Connected to Rover at {self.rover_ip}:{self.rover_port}")
 
         while self.running:
             key = self.getch().lower()
@@ -56,24 +62,21 @@ class KeyboardTeleop:
 
     def command_loop(self):
         while self.running:
-            self.rover.move(self.speed, self.turn)
+            self.rover.move(1, self.speed, self.turn) #change with ctl_packet, move_continously
             time.sleep(UPDATE_RATE)
 
     def start(self):
         self.rover.connect()
 
-        # Start input thread
         threading.Thread(target=self.input_loop, daemon=True).start()
-
-        # Start sending commands
         self.command_loop()
 
-        # Cleanup once user quits
-        self.rover.ctrl_packet(0, 0)
+        # Stop rover on exit
+        self.rover.move(0, 0, 1) #change with ctl_packet, move_continously
         self.rover.disconnect()
         print("Teleop stopped")
 
 
 if __name__ == "__main__":
-    teleop = KeyboardTeleop()  # change IP if needed
+    teleop = KeyboardTeleop("192.168.11.1", 8888)  
     teleop.start()
