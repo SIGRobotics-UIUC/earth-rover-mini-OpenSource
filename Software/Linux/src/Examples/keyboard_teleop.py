@@ -61,7 +61,8 @@ class KeyboardTeleop:
     def command_loop(self):
         while self.running:
             # self.rover.move(1, self.speed, self.turn) #change with ctl_packet, move_continously
-            self.rover.ctrl_packet(self.speed, self.turn)
+            # self.rover.ctrl_packet(self.speed, self.turn)
+            self.rover.move_continuous_loop(self.speed, self.turn)
             time.sleep(UPDATE_RATE)
 
     def start(self):
@@ -70,6 +71,7 @@ class KeyboardTeleop:
         threading.Thread(target=self.input_loop, daemon=True).start()
         self.command_loop()
 
+    def stop(self):
         # Stop rover on exit
         self.rover.move(0, 0, 0) #change with ctl_packet, move_continously
         self.rover.disconnect()
@@ -79,3 +81,4 @@ class KeyboardTeleop:
 if __name__ == "__main__":
     teleop = KeyboardTeleop("192.168.11.1", 8888)  
     teleop.start()
+    teleop.stop()
