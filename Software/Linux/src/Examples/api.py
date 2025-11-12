@@ -379,22 +379,29 @@ class EarthRoverMiniBlocking:
     def move_continuous_loop(self, speed, angular):
         print(f"[MOVE_CONTINUOUS] speed={speed}, angular={angular}")
         self.moving = True
-        try:
-            while self.moving:
-                self.ctrl_packet(speed, angular)
-                # if self.telemetry_event.wait(timeout=0.5):
-                #     data = self.last_telemetry
-                #     print(f"[MOVE_CONTINUOUS] Telemetry update: RPM={data['rpm']}")
-                #     self.telemetry_event.clear()
-                # else:
-                #     print("[MOVE_CONTINUOUS] No telemetry update")
-                # time.sleep(0.1)
-        finally:
-            # Always send a stop at the end of the loop
-            self.ctrl_packet(0, 0)
-            print("[MOVE_CONTINUOUS] Exiting cleanly")
-        
+        # try:
+        #     while self.moving:
+        #         self.ctrl_packet(speed, angular)
+        #         # if self.telemetry_event.wait(timeout=0.5):
+        #         #     data = self.last_telemetry
+        #         #     print(f"[MOVE_CONTINUOUS] Telemetry update: RPM={data['rpm']}")
+        #         #     self.telemetry_event.clear()
+        #         # else:
+        #         #     print("[MOVE_CONTINUOUS] No telemetry update")
+        #         # time.sleep(0.1)
+        # finally:
+        #     # Always send a stop at the end of the loop
+        #     self.ctrl_packet(0, 0)
+        #     print("[MOVE_CONTINUOUS] Exiting cleanly")
+    
         self.ctrl_packet(speed, angular)
+        if self.telemetry_event.wait(timeout=0.5):
+            data = self.last_telemetry
+            print(f"[MOVE_CONTINUOUS] Telemetry update: RPM={data['rpm']}")
+            self.telemetry_event.clear()
+        else:
+            print("[MOVE_CONTINUOUS] No telemetry update")
+        print("[MOVE_CONTINUOUS] Exiting cleanly")
 
     def move_continuous(self, speed, angular): #debug look at how calling a second move_continuous is handled by the thread already running 
         """Non-blocking starter; returns immediately and keeps moving until stop()."""
