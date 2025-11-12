@@ -45,13 +45,13 @@ class KeyboardTeleop:
                 break
 
             if key == "w":
-                self.speed = 60
+                self.speed += 60
             elif key == "s":
-                self.speed = -60
+                self.speed += -60
             elif key == "a":
-                self.turn = -40
+                self.turn += -40
             elif key == "d":
-                self.turn = 40
+                self.turn += 40
             elif key == " ":
                 self.speed = 0
                 self.turn = 0
@@ -60,7 +60,8 @@ class KeyboardTeleop:
 
     def command_loop(self):
         while self.running:
-            self.rover.move(1, self.speed, self.turn) #change with ctl_packet, move_continously
+            # self.rover.move(1, self.speed, self.turn) #change with ctl_packet, move_continously
+            self.rover.ctrl_packet(self.speed, self.turn)
             time.sleep(UPDATE_RATE)
 
     def start(self):
@@ -70,7 +71,7 @@ class KeyboardTeleop:
         self.command_loop()
 
         # Stop rover on exit
-        self.rover.move(0, 0, 1) #change with ctl_packet, move_continously
+        self.rover.move(0, 0, 0) #change with ctl_packet, move_continously
         self.rover.disconnect()
         print("Teleop stopped")
 

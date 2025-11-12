@@ -1056,7 +1056,7 @@ class EarthRoverMiniBlocking:
                     self.telemetry_event.clear()
                 else:
                     print("[MOVE_CONTINUOUS] No telemetry update")
-                time.sleep(0.1)
+                # time.sleep(0.1)
         finally:
             # Always send a stop at the end of the loop
             self.ctrl_packet(0, 0)
@@ -1068,10 +1068,11 @@ class EarthRoverMiniBlocking:
             print("[MOVE_CONTINUOUS] Already running")
             return
         self.moving = True
-        self.move_thread = threading.Thread(
-            target=self.move_continuous_loop, args=(speed, angular), daemon=True
-        )
-        self.move_thread.start()
+        # self.move_thread = threading.Thread(
+        #     target=self.move_continuous_loop, args=(speed, angular), daemon=True
+        # )
+        # self.move_thread.start()
+        self.move_continuous_loop(speed, angular)
 
     def stop(self):
         """Stops continuous motion (if running) and sends a zero command."""
