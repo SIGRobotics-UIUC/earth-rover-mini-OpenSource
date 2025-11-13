@@ -1,3 +1,4 @@
+import logging
 import socket, struct, asyncio, time, contextlib, copy, threading
 from typing import Any
 from uart_cp import (
@@ -45,6 +46,12 @@ UCP_MAG_WRITE            = 0x7
 UCP_IMUMAG_READ          = 0x8
 UCP_OTA                  = 0x9
 UCP_STATE                = 0xA
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s.%(msecs)03d [%(levelname)s] %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S"
+)
 
 PRINT_DEBUG = False
 def debug_print(*args, **kwargs):
@@ -751,7 +758,7 @@ class EarthRoverMiniBlocking:
     def connect(self):
         self.sock = socket.create_connection((self.ip, self.port))
         self.sock.settimeout(1.0)
-        debug_print(f"[API] Connected to rover at {self.ip}:{self.port}")
+        logging.debug(f"[API] Connected to rover at {self.ip}:{self.port}")
         self.running = True
         self.reader_thread = threading.Thread(target=self.reader_loop, daemon=True)
         self.reader_thread.start()
@@ -764,7 +771,7 @@ class EarthRoverMiniBlocking:
                 self.sock.close()
         if self.reader_thread and self.reader_thread.is_alive():
             self.reader_thread.join(timeout=1)
-        debug_print("[API] Disconnected from rover")
+        logging.debug(f"[API] Rover disconnected")
 
     # --- Send / Receive ---
     def send_packet(self, packet):
@@ -775,12 +782,12 @@ class EarthRoverMiniBlocking:
 
     def reader_loop(self):
         buf = b""
-        debug_print("[READER] Started blocking read loop")
+        logging.debug("[READER] Started blocking read loop")
         while self.running:
             try:
                 data = self.sock.recv(512)
                 if not data:
-                    debug_print("[READER] Connection closed by rover")
+                    logging.debug("[READER] Connection closed by rover")
                     break
                 buf += data
                 frames, buf = self.extract_frames(buf)
@@ -789,9 +796,9 @@ class EarthRoverMiniBlocking:
             except socket.timeout:
                 continue
             except Exception as e:
-                debug_print(f"[READER] Error: {e}")
+                logging.debug(f"[READER] Error: {e}")
                 break
-        debug_print("[READER] Exiting...")
+        logging.debug("[READER] Exiting...")
 
     # --- Helper Methods ---
     def make_header(self, packet, pkt_id):
@@ -892,7 +899,7 @@ class EarthRoverMiniBlocking:
                 frames.append(frame)
                 i = sync_index + total_len
             else:
-                debug_print(f"[FRAME] Bad CRC @ {sync_index}: expected={expected_crc:04X}, got={computed_crc:04X}")
+                logging.debug(f"[FRAME] Bad CRC @ {sync_index}: expected={expected_crc:04X}, got={computed_crc:04X}")
                 i = sync_index + 1  # resync one byte forward
 
         return frames, buf[i:]
@@ -969,9 +976,9 @@ class EarthRoverMiniBlocking:
                 now = time.time()
                 if now - self.last_rpm_log_time >= 1.0:
                     self.last_rpm_log_time = now
-                    print(f"[PKT {pkt_id:02X}] {decoded}")
+                    logging.debug(f"[PKT {pkt_id:02X}] {decoded}")
             else:
-                print(f"[PKT {pkt_id:02X}] {decoded}")
+                logging.debug(f"[PKT {pkt_id:02X}] {decoded}")
         else:
             self.decode_unknown(frame)
 
@@ -983,38 +990,38 @@ class EarthRoverMiniBlocking:
         """
         if wait:
             if not self.telemetry_event.wait(timeout=timeout):
-                print("[GET_TELEMETRY] Timeout waiting for telemetry")
+                logging.warning("[GET_TELEMETRY] Timeout waiting for telemetry")
                 return self.last_telemetry  # May be stale or None
             self.telemetry_event.clear()
 
         data = self.last_telemetry
         if data:
-            print(f"[GET_TELEMETRY] Latest: RPM={data['rpm']}")
+            logging.debug(f"[GET_TELEMETRY] Latest: RPM={data['rpm']}")
         else:
-            print("[GET_TELEMETRY] No telemetry available")
+            logging.debug("[GET_TELEMETRY] No telemetry available")
         return data
 
     def ping(self):
         ping_pkt = UcpAlivePing()
         self.make_header(ping_pkt, UCP_KEEP_ALIVE)
         self.ack_event.clear()
-        print(f"[DEBUG] hdr.len={ping_pkt.hd.len}, sizeof(packet)={len(bytes(ping_pkt))}")
+        logging.debug(f"[DEBUG] hdr.len={ping_pkt.hd.len}, sizeof(packet)={len(bytes(ping_pkt))}")
 
         self.send_packet(ping_pkt)
         if self.ack_event.wait(timeout=1.0):
-            print(f"[PING] ACK received: {self.last_ack}")
+            logging.info(f"[PING] ACK received: {self.last_ack}")
             return True
         else:
-            print("[PING] Timeout waiting for ACK")
+            logging.warning("[PING] Timeout waiting for ACK")
             return False
 
     def safe_ping(self, retries=3):
         for attempt in range(1, retries + 1):
             if self.ping():
                 return True
-            print(f"[PING] Retry {attempt}/{retries} failed")
+            logging.info(f"[PING] Retry {attempt}/{retries} failed")
             time.sleep(0.5)
-        print("[PING] Failed after retries")
+        logging.warning("[PING] Failed after retries")
         return False
 
     def ctrl_packet(self, speed, angular): #sends the command packet to the rover
@@ -1022,27 +1029,12 @@ class EarthRoverMiniBlocking:
         self.make_header(ctrl_pkt, UCP_MOTOR_CTL)
         ctrl_pkt.speed = speed
         ctrl_pkt.angular = angular
-        print(f"[DEBUG] hdr.len={ctrl_pkt.hd.len}, sizeof(packet)={len(bytes(ctrl_pkt))}")
+        logging.debug(f"[DEBUG] hdr.len={ctrl_pkt.hd.len}, sizeof(packet)={len(bytes(ctrl_pkt))}")
         self.send_packet(ctrl_pkt)
-        print(f"[CTRL] speed={speed}, angular={angular}")
+        logging.debug(f"[CTRL] speed={speed}, angular={angular}")
 
-    def move(self, duration, speed, angular):
-        """Blocking ‘timed’ move; keeps printing telemetry if it arrives."""
-        print(f"[MOVE] speed={speed}, angular={angular}")
-        start = time.time()
-        while time.time() - start < duration:
-            self.ctrl_packet(speed, angular)
-            # give the rover some time; interleave with telemetry checks
-            if self.telemetry_event.wait(timeout=0.5):
-                data = self.last_telemetry
-                print(f"[MOVE] Telemetry update: RPM={data['rpm']}")
-                self.telemetry_event.clear()
-            else:
-                print("[MOVE] No telemetry update")
-            time.sleep(0.1)
-
-        self.ctrl_packet(0, 0)
-        print("[MOVE] stop")
+    def move(self, speed, angular):
+        self.ctrl_packet(speed, angular)
 
     # ---------- Continuous move in background thread ----------
     def move_continuous_loop(self, speed, angular):
@@ -1052,20 +1044,20 @@ class EarthRoverMiniBlocking:
                 self.ctrl_packet(speed, angular)
                 if self.telemetry_event.wait(timeout=0.5):
                     data = self.last_telemetry
-                    print(f"[MOVE_CONTINUOUS] Telemetry update: RPM={data['rpm']}")
+                    logging.info(f"[MOVE_CONTINUOUS] Telemetry update: RPM={data['rpm']}")
                     self.telemetry_event.clear()
                 else:
-                    print("[MOVE_CONTINUOUS] No telemetry update")
+                    logging.info("[MOVE_CONTINUOUS] No telemetry update")
                 time.sleep(0.1)
         finally:
             # Always send a stop at the end of the loop
             self.ctrl_packet(0, 0)
-            print("[MOVE_CONTINUOUS] Exiting cleanly")
+            logging.info("[MOVE_CONTINUOUS] Exiting cleanly")
 
     def move_continuous(self, speed, angular): #debug look at how calling a second move_continuous is handled by the thread already running 
         """Non-blocking starter; returns immediately and keeps moving until stop()."""
         if getattr(self, "_move_thread", None) and self.move_thread.is_alive():
-            print("[MOVE_CONTINUOUS] Already running")
+            logging.info("[MOVE_CONTINUOUS] Already running")
             return
         self.moving = True
         self.move_thread = threading.Thread(
@@ -1076,7 +1068,7 @@ class EarthRoverMiniBlocking:
     def stop(self):
         """Stops continuous motion (if running) and sends a zero command."""
         if not getattr(self, "moving", False):
-            print("[STOP] Rover already stopped")
+            logging.info("[STOP] Rover already stopped")
             # still ensure a zero command hits the motors
             self.ctrl_packet(0, 0)
             return
@@ -1085,7 +1077,7 @@ class EarthRoverMiniBlocking:
         if getattr(self, "_move_thread", None):
             self.move_thread.join(timeout=1.0)
         self.ctrl_packet(0, 0)
-        print("[STOP] Rover stopped")
+        logging.info("[STOP] Rover stopped")
 
     def imu_calibrate(self, mode=1):
         imu_pkt = UcpImuCorrect()
@@ -1244,14 +1236,21 @@ class EarthRoverMiniBlocking:
 
 
 if __name__ == "__main__":
-    rover = EarthRoverMiniBlocking("192.168.11.1", 8888)
+    rover = EarthRoverMiniBlocking("192.168.1.113", 8888)
     rover.connect()
 
-    print("\n[TEST] Ping test:")
+    logging.info("Ping test:")
     rover.safe_ping()
 
-    print("\n[TEST] Move test (3s at speed=60, angular=360):")
-    rover.move(1, 60, 0)
+    logging.info("Move continuous test (3s at speed=60, angular=0):")
+
+    duration = 3
+    start = time.time()
+    while time.time() - start < duration:
+        rover.move(60, 0)
+        rover.get_telemetry(wait=False)
+        time.sleep(0.033)  # command at ~30Hz
+
+    rover.move(0, 0)
 
     rover.disconnect()
-

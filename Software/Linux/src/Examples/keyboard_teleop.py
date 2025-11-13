@@ -2,81 +2,84 @@
 import time
 import threading
 import sys
-import termios
-import tty
+import pynput
+import logging
 
 from api import EarthRoverMiniBlocking
 
-UPDATE_RATE = 0.03 #every num of seconds send command  
+UPDATE_RATE = 0.03 #every num of seconds send command
 
 class KeyboardTeleop:
     def __init__(self, rover_ip="192.168.11.1", rover_port=8888):
         self.rover_ip = rover_ip
         self.rover_port = rover_port
-
-     
         self.rover = EarthRoverMiniBlocking(self.rover_ip, self.rover_port)
 
-        self.speed = 0
-        self.turn = 0
         self.running = True
+        self.key_pressed = {}
+        self.listener = pynput.keyboard.Listener(
+            on_press=self.on_press,
+            on_release=self.on_release
+        )
 
-   
-    def getch(self):
-        fd = sys.stdin.fileno()
-        old_attr = termios.tcgetattr(fd)
+    def on_press(self, key):
         try:
-            tty.setraw(fd)
-            ch = sys.stdin.read(1)
-        finally:
-            termios.tcsetattr(fd, termios.TCSADRAIN, old_attr)
-        return ch
+            self.key_pressed[key.char] = True
+        except AttributeError:
+            pass
 
-    def input_loop(self):
-        print("\nKeyboard Teleop Controls:")
+    def on_release(self, key):
+        try:
+            if key.char in self.key_pressed:
+                del self.key_pressed[key.char]
+        except AttributeError:
+            pass
+
+    def command_loop(self):
+        print("Keyboard Teleop Controls:")
         print("    W: forward   S: backward")
         print("    A: turn left D: turn right")
         print("    SPACE: stop  Q: quit\n")
         print(f"Connected to Rover at {self.rover_ip}:{self.rover_port}")
 
+        last_show_rpm_time = time.time()
+
         while self.running:
-            key = self.getch().lower()
+            actions = self.key_pressed
+            turn = 0
+            speed = 0
+            for key in actions:
+                if key == 'w':
+                    speed = 40
+                elif key == 's':
+                    speed = -40
+                elif key == 'a':
+                    turn = -40
+                elif key == 'd':
+                    turn = 40
+            self.rover.move(speed, turn)
+            # show rpm every second
+            if time.time() - last_show_rpm_time > 1.0:
+                print(f"\nRPM: {self.rover.get_telemetry(wait=0.01)['rpm']}")
+                last_show_rpm_time = time.time()
 
-            if key == "q":
-                self.running = False
-                break
-
-            if key == "w":
-                self.speed = 60
-            elif key == "s":
-                self.speed = -60
-            elif key == "a":
-                self.turn = 40
-            elif key == "d":
-                self.turn = -40
-            elif key == " ":
-                self.speed = 0
-                self.turn = 0
-
-            print(f"[KEY] speed={self.speed}, turn={self.turn}")
-
-    def command_loop(self):
-        while self.running:
-            self.rover.move(1, self.speed, self.turn) #change with ctl_packet, move_continously
             time.sleep(UPDATE_RATE)
 
     def start(self):
+        # Connect to rover
         self.rover.connect()
+        # Start keyboard listener
+        self.listener.start()
 
-        threading.Thread(target=self.input_loop, daemon=True).start()
         self.command_loop()
 
-        # Stop rover on exit
-        self.rover.move(0, 0, 1) #change with ctl_packet, move_continously
+        # Stop keyboard listener
+        self.listener.stop()
+        # Stop rover and disconnect
+        self.rover.move(0, 0)
         self.rover.disconnect()
-        print("Teleop stopped")
 
 
 if __name__ == "__main__":
-    teleop = KeyboardTeleop("192.168.11.1", 8888)  
+    teleop = KeyboardTeleop("192.168.11.1", 8888)
     teleop.start()
