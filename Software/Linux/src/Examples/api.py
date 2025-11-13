@@ -1,4 +1,7 @@
 import logging
+from abc import ABC, abstractmethod
+from urllib import request
+import json
 import socket, struct, asyncio, time, contextlib, copy, threading
 from typing import Any
 from uart_cp import (
@@ -33,8 +36,6 @@ from uart_cp import (
     UcpOtaAck,
     UcpState,
 )
-
-
 
 UCP_KEEP_ALIVE           = 0x1
 UCP_MOTOR_CTL            = 0x2
@@ -728,7 +729,65 @@ class EarthRoverMini:
             print("[IMU_READ] Timeout waiting for IMU/MAG data")
             return None
 
-class EarthRoverMiniBlocking:
+class RobotComm(ABC):
+    @abstractmethod
+    def get_telemetry(self, wait=True, timeout=1.0):
+        pass
+
+    @abstractmethod
+    def move(self, speed: int, angular: int):
+        pass
+
+    @abstractmethod
+    def connect(self):
+        pass
+
+    @abstractmethod
+    def disconnect(self):
+        pass
+
+class WebrtcBridge(RobotComm):
+    def __init__(self, url: str = "http://localhost:8000"):
+        self.url = url
+
+    def get_telemetry(self, wait=True, timeout=1.0):
+        try:
+            with request.urlopen(f"{self.url}/data", timeout=timeout) as resp:
+                if resp.status != 200:
+                    logging.error(f"telemetry fetch failed: {resp.status} {resp.reason}")
+                    return None
+                data = resp.read()
+                telemetry = json.loads(data.decode('utf-8'))
+                # XXX: need to define same interfacae as TcpBridge
+                telemetry["rpm"] = telemetry["rpms"][0]
+                return telemetry
+        except Exception as e:
+            logging.error(f"telemetry fetch exception: {e}")
+            return None
+
+    def move(self, speed: int, angular: int):
+        payload = {
+            "command": {
+                "linear": speed / 100.0,
+                "angular": angular / 100.0
+            }
+        }
+        data = json.dumps(payload).encode('utf-8')
+        req = request.Request(f"{self.url}/control", data=data, method='POST')
+        req.add_header('Content-Type', 'application/json')
+        try:
+            with request.urlopen(req) as resp:
+                logging.debug(f"control send response: {resp.status} {resp.reason}")
+        except Exception as e:
+            logging.error(f"control send failed: {e}")
+
+    def connect(self):
+        pass
+
+    def disconnect(self):
+        pass
+
+class TcpBridge(RobotComm):
     HEADER = b"\xFD\xFF"
 
     def __init__(self, ip: str, port: int = 5500):
@@ -1144,6 +1203,27 @@ class EarthRoverMiniBlocking:
             print("[IMU_READ] Timeout waiting for IMU/MAG data")
             return None
 
+class EarthRoverMiniBlocking:
+    def __init__(self, ip: str = "", port: int = 5500, url: str = ""):
+        if url.startswith("http://") or url.startswith("https://"):
+            logging.info("Connect via WebRTC")
+            self.bridge = WebrtcBridge(url)
+        else:
+            logging.info("Connect via TCP")
+            self.bridge = TcpBridge(ip, port)
+
+    def get_telemetry(self, wait=True, timeout=1.0):
+        return self.bridge.get_telemetry(wait, timeout)
+
+    def move(self, speed: int, angular: int):
+        self.bridge.move(speed, angular)
+
+    def connect(self):
+        self.bridge.connect()
+
+    def disconnect(self):
+        self.bridge.disconnect()
+
 # ===========================================================
 # ---- Example usage ----------------------------------------
 # ===========================================================
@@ -1236,21 +1316,19 @@ class EarthRoverMiniBlocking:
 
 
 if __name__ == "__main__":
-    rover = EarthRoverMiniBlocking("192.168.1.113", 8888)
+    # tcp bridge
+    rover = EarthRoverMiniBlocking("192.168.11.1", 8888)
+    # webrtc sdk
+    #rover = EarthRoverMiniBlocking(url="http://localhost:8000")
     rover.connect()
 
-    logging.info("Ping test:")
-    rover.safe_ping()
-
     logging.info("Move continuous test (3s at speed=60, angular=0):")
-
     duration = 3
     start = time.time()
     while time.time() - start < duration:
         rover.move(60, 0)
-        rover.get_telemetry(wait=False)
+        #print(rover.get_telemetry(wait=False))
         time.sleep(0.033)  # command at ~30Hz
 
     rover.move(0, 0)
-
     rover.disconnect()

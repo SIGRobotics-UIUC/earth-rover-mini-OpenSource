@@ -13,7 +13,10 @@ class KeyboardTeleop:
     def __init__(self, rover_ip="192.168.11.1", rover_port=8888):
         self.rover_ip = rover_ip
         self.rover_port = rover_port
+        # tcp bridge
         self.rover = EarthRoverMiniBlocking(self.rover_ip, self.rover_port)
+        # webrtc sdk
+        #self.rover = EarthRoverMiniBlocking(url="http://localhost:8000")
 
         self.running = True
         self.key_pressed = {}
