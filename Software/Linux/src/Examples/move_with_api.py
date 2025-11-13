@@ -1,4 +1,4 @@
-from api import api_structure
+from api import EarthRoverMini
 import time
 
 def move_forward(api, duration = 1.0):
@@ -40,7 +40,7 @@ def move_forward(api, duration = 1.0):
 if __name__ == "__main__":
     rover_ip = "192.168.11.1"
     rover_port = 8888
-    apiObj = api_structure(rover_ip, rover_port)    
+    apiObj = EarthRoverMini(rover_ip, rover_port)    
 
     try:
         input("Press enter to move forward...")
