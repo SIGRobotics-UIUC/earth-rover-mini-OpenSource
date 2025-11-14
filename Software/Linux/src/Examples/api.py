@@ -33,26 +33,13 @@ from uart_cp import (
     UcpState,
 )
 
-
-
-UCP_KEEP_ALIVE           = 0x1
-UCP_MOTOR_CTL            = 0x2
-UCP_IMU_CORRECTION_START = 0x3
-UCP_IMU_CORRECTION_END   = 0x4
-UCP_RPM_REPORT           = 0x5
-UCP_IMU_WRITE            = 0x6
-UCP_MAG_WRITE            = 0x7
-UCP_IMUMAG_READ          = 0x8
-UCP_OTA                  = 0x9
-UCP_STATE                = 0xA
-
 PRINT_DEBUG = False
 def debug_print(*args, **kwargs):
     if PRINT_DEBUG:
         print(*args, **kwargs)
 
 
-class EarthRoverMiniBlocking:
+class EarthRoverMini_API:
     HEADER = b"\xFD\xFF"
 
     def __init__(self, ip: str, port: int = 5500):
@@ -379,20 +366,6 @@ class EarthRoverMiniBlocking:
     def move_continuous_loop(self, speed, angular):
         print(f"[MOVE_CONTINUOUS] speed={speed}, angular={angular}")
         self.moving = True
-        # try:
-        #     while self.moving:
-        #         self.ctrl_packet(speed, angular)
-        #         # if self.telemetry_event.wait(timeout=0.5):
-        #         #     data = self.last_telemetry
-        #         #     print(f"[MOVE_CONTINUOUS] Telemetry update: RPM={data['rpm']}")
-        #         #     self.telemetry_event.clear()
-        #         # else:
-        #         #     print("[MOVE_CONTINUOUS] No telemetry update")
-        #         # time.sleep(0.1)
-        # finally:
-        #     # Always send a stop at the end of the loop
-        #     self.ctrl_packet(0, 0)
-        #     print("[MOVE_CONTINUOUS] Exiting cleanly")
     
         self.ctrl_packet(speed, angular)
         if self.telemetry_event.wait(timeout=0.5):
@@ -496,7 +469,7 @@ class EarthRoverMiniBlocking:
 
 
 if __name__ == "__main__":
-    rover = EarthRoverMiniBlocking("192.168.11.1", 8888)
+    rover = EarthRoverMini_API("192.168.11.1", 8888)
     rover.connect()
 
     print("\n[TEST] Ping test:")
